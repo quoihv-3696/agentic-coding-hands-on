@@ -30,7 +30,7 @@ export default function LoginPage() {
         className="pointer-events-none absolute inset-0"
         style={{
           background: [
-            "linear-gradient(to right, #00101A 0%, rgba(0,16,26,0.6) 30%, rgba(0,16,26,0) 75%)",
+            "linear-gradient(to right, #00101A 0%, rgba(0,16,26,1) 30%, rgba(0,16,26,0) 75%)",
             "linear-gradient(to bottom, rgba(0,19,32,0) 13%, rgba(0,19,32,0.55) 60%, #001320 100%)",
           ].join(", "),
         }}
