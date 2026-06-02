@@ -2,19 +2,24 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+This project requires a local Supabase instance and Google OAuth credentials.
+
+1. Copy `.env.example` to `.env.local` and fill in the values (see comments in that file).
+2. Start the local Supabase stack:
+
+```bash
+supabase start
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). You will be redirected to the login page — sign in with Google via the popup to access the app.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
