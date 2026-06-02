@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GoogleLoginButton } from "./google-login-button";
@@ -28,15 +29,15 @@ export function LoginHero() {
 
   return (
     <main className="relative z-10 flex flex-1 flex-col justify-center px-8 pb-20 pt-28 sm:px-12 md:px-16 lg:px-24">
-      {/* ROOT FURTHER wordmark (brand mark — not localized) */}
-      <h1
-        className="mb-10 font-light leading-none tracking-tight text-[#F5F0E8]"
-        style={{ fontSize: "clamp(4rem, 12vw, 13rem)" }}
-      >
-        ROOT
-        <br />
-        FURTHER
-      </h1>
+      {/* ROOT FURTHER wordmark (brand image asset from the design) */}
+      <Image
+        src="/login/logo.png"
+        alt="ROOT FURTHER"
+        width={451}
+        height={200}
+        priority
+        className="mb-10 h-auto w-[clamp(16rem,38vw,28.1875rem)]"
+      />
 
       {/* Welcome text */}
       <div className="mb-8 space-y-1">
