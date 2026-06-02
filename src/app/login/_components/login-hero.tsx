@@ -5,7 +5,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GoogleLoginButton } from "./google-login-button";
 import { useTranslations } from "@/lib/i18n/i18n-context";
-import { signInWithGoogle } from "@/lib/auth/sign-in-with-google";
+import {
+  signInWithGoogle,
+  SIGN_IN_ERROR_CODES,
+} from "@/lib/auth/sign-in-with-google";
 
 export function LoginHero() {
   const { t } = useTranslations();
@@ -21,7 +24,11 @@ export function LoginHero() {
       router.push("/");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign-in failed.");
+      const code = err instanceof Error ? err.message : "failed";
+      const key = (SIGN_IN_ERROR_CODES as readonly string[]).includes(code)
+        ? code
+        : "failed";
+      setError(t(`login.errors.${key}`));
     } finally {
       setLoading(false);
     }

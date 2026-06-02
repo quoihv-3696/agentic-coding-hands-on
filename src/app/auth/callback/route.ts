@@ -1,6 +1,11 @@
 import { type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+/** JSON-encode a value for safe inlining inside a <script> tag (no </script> breakout). */
+function scriptJson(value: string): string {
+  return JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+}
+
 /**
  * OAuth callback. Exchanges the authorization code for a session (sets cookies),
  * then — because login runs in a popup — notifies the opener and closes itself.
@@ -33,12 +38,12 @@ export async function GET(request: NextRequest) {
   <body>
     <script>
       (function () {
-        var message = ${JSON.stringify(`saa-auth:${status}`)};
+        var message = ${scriptJson(`saa-auth:${status}`)};
         if (window.opener && !window.opener.closed) {
-          window.opener.postMessage(message, ${JSON.stringify(origin)});
+          window.opener.postMessage(message, ${scriptJson(origin)});
           window.close();
         } else {
-          window.location.replace(${JSON.stringify(fallbackPath)});
+          window.location.replace(${scriptJson(fallbackPath)});
         }
       })();
     </script>

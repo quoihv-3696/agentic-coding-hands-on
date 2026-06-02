@@ -5,7 +5,13 @@
     "welcomeLine2": "Log in to explore!",
     "button": "Login with Google",
     "switchLanguage": "Switch language",
-    "footer": "Copyright © Sun* 2025"
+    "footer": "Copyright © Sun* 2025",
+    "errors": {
+      "startFailed": "Couldn't start Google sign-in. Please try again.",
+      "popupBlocked": "Popup was blocked. Please allow popups and try again.",
+      "failed": "Google sign-in failed. Please try again.",
+      "cancelled": "Sign-in cancelled."
+    }
   },
   "home": {
     "title": "SAA 2025 Home",

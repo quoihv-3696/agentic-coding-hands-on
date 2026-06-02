@@ -5,7 +5,13 @@
     "welcomeLine2": "Đăng nhập để khám phá!",
     "button": "Đăng nhập với Google",
     "switchLanguage": "Chuyển đổi ngôn ngữ",
-    "footer": "Bản quyền thuộc về Sun* © 2025"
+    "footer": "Bản quyền thuộc về Sun* © 2025",
+    "errors": {
+      "startFailed": "Không thể bắt đầu đăng nhập Google. Vui lòng thử lại.",
+      "popupBlocked": "Cửa sổ pop-up bị chặn. Vui lòng cho phép pop-up rồi thử lại.",
+      "failed": "Đăng nhập Google thất bại. Vui lòng thử lại.",
+      "cancelled": "Đã hủy đăng nhập."
+    }
   },
   "home": {
     "title": "Trang chủ SAA 2025",

@@ -2,6 +2,14 @@ import { createClient } from "@/lib/supabase/client";
 
 const POPUP_MESSAGE_PREFIX = "saa-auth:";
 
+/** Stable error codes thrown by signInWithGoogle — map to `login.errors.<code>` i18n keys. */
+export const SIGN_IN_ERROR_CODES = [
+  "startFailed",
+  "popupBlocked",
+  "failed",
+  "cancelled",
+] as const;
+
 /**
  * Starts Google OAuth in a popup window (per spec: "new tab or popup").
  * Resolves when the /auth/callback route posts a success message and the
@@ -17,7 +25,8 @@ export async function signInWithGoogle(): Promise<void> {
   });
 
   if (error || !data?.url) {
-    throw error ?? new Error("Failed to start Google sign-in.");
+    console.error("Google OAuth start failed", error);
+    throw new Error("startFailed");
   }
 
   const popup = window.open(
@@ -27,7 +36,7 @@ export async function signInWithGoogle(): Promise<void> {
   );
 
   if (!popup) {
-    throw new Error("Popup was blocked. Please allow popups and try again.");
+    throw new Error("popupBlocked");
   }
 
   return new Promise<void>((resolve, reject) => {
@@ -51,7 +60,7 @@ export async function signInWithGoogle(): Promise<void> {
       if (event.data === `${POPUP_MESSAGE_PREFIX}success`) {
         resolve();
       } else {
-        reject(new Error("Google sign-in failed."));
+        reject(new Error("failed"));
       }
     };
 
@@ -61,7 +70,7 @@ export async function signInWithGoogle(): Promise<void> {
     const closedTimer = setInterval(() => {
       if (popup.closed && !settled) {
         cleanup();
-        reject(new Error("Sign-in cancelled."));
+        reject(new Error("cancelled"));
       }
     }, 500);
   });
