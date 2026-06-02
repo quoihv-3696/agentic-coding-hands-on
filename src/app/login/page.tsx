@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LoginHeader } from "./_components/login-header";
 import { LoginHero } from "./_components/login-hero";
 import { LoginFooter } from "./_components/login-footer";
@@ -12,13 +13,16 @@ export default function LoginPage() {
       className="relative flex min-h-screen flex-col overflow-hidden"
       style={{ backgroundColor: "#00101A" }}
     >
-      {/* Full-viewport background artwork */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      {/* Full-viewport background artwork — next/image serves optimized
+         (WebP/AVIF), viewport-sized variants of the large source PNG. */}
+      <Image
         src="/login/bg.png"
         alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        aria-hidden
+        fill
+        priority
+        sizes="100vw"
+        className="pointer-events-none object-cover object-center"
       />
 
       {/* Two cover layers from the design, stacked:
