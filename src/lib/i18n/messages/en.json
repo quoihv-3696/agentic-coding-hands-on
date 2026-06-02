@@ -1,0 +1,16 @@
+{
+  "language": { "vn": "VN", "en": "EN" },
+  "login": {
+    "welcomeLine1": "Start your journey with SAA 2025.",
+    "welcomeLine2": "Log in to explore!",
+    "button": "Login with Google",
+    "switchLanguage": "Switch language",
+    "footer": "Copyright © Sun* 2025"
+  },
+  "home": {
+    "title": "SAA 2025 Home",
+    "greeting": "Welcome to SAA 2025",
+    "loggedInAs": "You are logged in as",
+    "logout": "Log out"
+  }
+}
