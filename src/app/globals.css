@@ -3,11 +3,35 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand palette */
+  --primary: #ffea9e;
+  --secondary: #00101a;
+  --container: #101417cc;
+  --error: #d4271d;
+
+  /* Text tokens */
+  --primary-1: #ffea9e;
+  --primary-2: #00101a;
+  --secondary-1: #ffffff;
+  --secondary-2: #999999;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-container: var(--container);
+  --color-error: var(--error);
+
+  /* Text tokens -> dùng làm màu chữ: text-primary-1, text-primary-2, text-secondary-1, text-secondary-2 */
+  --color-primary-1: var(--primary-1);
+  --color-primary-2: var(--primary-2);
+  --color-secondary-1: var(--secondary-1);
+  --color-secondary-2: var(--secondary-2);
+
   --font-sans: var(--font-montserrat);
   --font-digital: var(--font-digital-numbers);
 }
