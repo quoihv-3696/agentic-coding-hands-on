@@ -28,7 +28,9 @@ export function computeParts(targetMs: number, nowMs: number): CountdownParts {
   const totalMinutes = Math.floor(diff / 60_000);
   const totalHours = Math.floor(totalMinutes / 60);
   return {
-    days: Math.floor(totalHours / 24),
+    // The display has two digit cells per unit, so days are capped at 99
+    // (a target >99 days out shows "99" rather than wrapping to "00").
+    days: Math.min(Math.floor(totalHours / 24), 99),
     hours: totalHours % 24,
     minutes: totalMinutes % 60,
     isComplete: false,

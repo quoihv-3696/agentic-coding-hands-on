@@ -226,6 +226,14 @@ describe("computeParts", () => {
         isComplete: false,
       });
     });
+
+    it("caps days at 99 when more than 99 days remain", () => {
+      const days = 150;
+      const target = days * 24 * 60 * 60 * 1000; // 150 days from 0
+      const parts = computeParts(target, 0);
+      expect(parts.days).toBe(99);
+      expect(parts.isComplete).toBe(false);
+    });
   });
 
   describe("edge cases", () => {

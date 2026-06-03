@@ -26,9 +26,9 @@ export function CountdownTimer() {
 
   return (
     <div className="flex flex-col items-center gap-[clamp(1rem,1.6vw,1.5rem)] text-center">
-      <p className="text-[clamp(1.25rem,2.4vw,2.25rem)] font-bold leading-tight text-white">
+      <h1 className="text-[clamp(1.25rem,2.4vw,2.25rem)] font-bold leading-tight text-white">
         {t("countdown.title")}
-      </p>
+      </h1>
       <div className="flex items-start gap-[clamp(1.5rem,4vw,3.75rem)]">
         <CountdownUnit value={days} max={99} label={t("countdown.days")} />
         <CountdownUnit value={hours} max={23} label={t("countdown.hours")} />
