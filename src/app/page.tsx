@@ -1,17 +1,12 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { HomeView } from "./_components/home-view";
+import { Homepage } from "./_components/home/homepage";
 
-/** Protected home. Middleware also guards this; the check here is defense-in-depth. */
+/** Public SAA 2025 homepage. Reads the session only to drive the auth-aware header. */
 export default async function Home() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  return <HomeView email={user.email ?? ""} />;
+  return <Homepage authed={!!user} />;
 }

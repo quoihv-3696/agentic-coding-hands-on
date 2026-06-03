@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { CountdownTimer } from "../_components/countdown/countdown-timer";
+import { PrelaunchCountdown } from "../_components/countdown/prelaunch-countdown";
 
 /**
  * Public prelaunch countdown page. Three stacked layers per the design:
@@ -38,7 +38,7 @@ export default function CountdownPage() {
       />
 
       <main className="relative z-10 px-6">
-        <CountdownTimer />
+        <PrelaunchCountdown />
       </main>
     </div>
   );

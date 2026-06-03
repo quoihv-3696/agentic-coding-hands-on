@@ -17,12 +17,70 @@
     "title": "SAA 2025 Home",
     "greeting": "Welcome to SAA 2025",
     "loggedInAs": "You are logged in as",
-    "logout": "Log out"
+    "logout": "Log out",
+    "header": {
+      "aboutSaa": "About SAA 2025",
+      "awardsInfo": "Awards Information",
+      "kudos": "Sun* Kudos",
+      "notifications": "Notifications",
+      "account": "Account",
+      "profile": "Profile",
+      "adminDashboard": "Admin Dashboard"
+    },
+    "hero": {
+      "title": "ROOT FURTHER",
+      "comingSoon": "Coming soon",
+      "eventTimeLabel": "Time:",
+      "eventTime": "18h30",
+      "eventLocationLabel": "Location:",
+      "eventLocation": "Army Arts Theatre",
+      "eventStream": "Live broadcast on the Sun* Family Facebook Group",
+      "ctaAwards": "ABOUT AWARDS",
+      "ctaKudos": "ABOUT KUDOS"
+    },
+    "rootFurther": {
+      "title": "ROOT FURTHER",
+      "body1": "Facing the storm-like changes of the AI era and ever-rising customer demands, Sun* has chosen a strategy of diversifying capabilities — not only striving to be the elite in its field, but aiming higher, to a place where every Sunner is a “problem-solver”: an expert at resolving every issue and finding answers to every challenge of our projects, customers and society.\nInspired by this diversity of capability, flexible growth and the spirit of digging deep to break through in the AI era, “Root Further” was chosen as the official theme of the Sun* Annual Awards 2025.\nBeyond its surface meaning, “Root Further” is the journey of reaching ever further, rooting ever deeper, touching hidden “geological” layers to keep surviving, rising and nurturing the Sun* people's ever-burning passion for creating value. Like roots constantly driving into the earth, weaving through each layer of “sediment” to absorb the finest nutrients, Sun* people too are absorbing nourishment from the era and the market's challenges to renew themselves every day, broaden their capabilities and firmly “take root” in the AI era — an entirely new, complex and unpredictable layer, yet one brimming with potential and opportunity.",
+      "quote": "A tree with deep roots fears no storm",
+      "quoteSource": "English proverb",
+      "body2": "In the face of a storm, only trees with strong enough roots can stand firm. An organization of individuals confident in their diverse capabilities — ready to create, embrace challenges and master change — is one that not only stands steady amid turbulence but also harnesses every advantage and conquers the challenges of the times. More than just the name of a new chapter in the organization's growth, “Root Further” is also an encouragement for each of us to dare to believe in ourselves, dare to dig deep, unlock every potential, dare to break limits, and dare to become the most versatile and outstanding version of ourselves. Because in the AI era, diverse capability and harnessing the power of the times are prerequisites for endurance.\nNo one can foresee how many mysterious “geological” layers still lie deep within the “earth” of modern technology and markets. We only know that once “Root Further” has become a rooted spirit, we will feel no fear — only excitement before any uncharted territory on the journey forward. For we always believe that within those boundless realms lie countless wonders and chances to rise."
+    },
+    "awards": {
+      "sectionLabel": "Sun* annual awards 2025",
+      "sectionTitle": "Awards system",
+      "sectionDesc": "Categories are awarded to the TOP most outstanding individuals.",
+      "detail": "Details",
+      "cards": {
+        "topTalent": { "title": "Top Talent", "desc": "Honoring the top individuals excelling in every aspect" },
+        "topProject": { "title": "Top Project", "desc": "Honoring the top projects excelling in every aspect, with standout revenue" },
+        "topProjectLeader": { "title": "Top Project Leader", "desc": "Honoring the top leaders who inspire and drive projects to break through" },
+        "bestManager": { "title": "Best Manager", "desc": "Honoring managers with strong management skills who lead their teams" },
+        "signature2025Creator": { "title": "Signature 2025 - Creator", "desc": "Honoring managers with strong management skills who lead their teams" },
+        "mvp": { "title": "MVP (Most Valuable Person)", "desc": "Honoring managers with strong management skills who lead their teams" }
+      }
+    },
+    "kudos": {
+      "label": "Recognition movement",
+      "title": "Sun* Kudos",
+      "description": "",
+      "detail": "Details"
+    },
+    "footer": {
+      "aboutSaa": "About SAA 2025",
+      "awardsInfo": "Awards Information",
+      "kudos": "Sun* Kudos",
+      "copyright": "Copyright © Sun* 2025"
+    }
   },
   "countdown": {
     "title": "The event starts in",
     "days": "DAYS",
     "hours": "HOURS",
     "minutes": "MINUTES"
-  }
+  },
+  "comingSoon": {
+    "message": "This page is under construction."
+  },
+  "awardsPage": { "title": "Awards Information" },
+  "kudosPage": { "title": "Sun* Kudos" }
 }

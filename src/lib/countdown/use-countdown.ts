@@ -42,12 +42,18 @@ export function computeParts(targetMs: number, nowMs: number): CountdownParts {
  *
  * Starts from a deterministic zero state so server and first client render match
  * (no hydration mismatch); the real remaining time is computed on mount.
+ *
+ * A null target (missing/invalid configuration) renders a static 00/00/00
+ * fallback with no timer — no crash.
  */
-export function useCountdown(target: Date): CountdownParts {
-  const targetMs = target.getTime();
+export function useCountdown(target: Date | null): CountdownParts {
+  const targetMs = target ? target.getTime() : Number.NaN;
   const [parts, setParts] = useState<CountdownParts>(ZERO);
 
   useEffect(() => {
+    // Null/invalid target: no timer runs, so the state stays at the initial
+    // ZERO (static 00/00/00 fallback).
+    if (Number.isNaN(targetMs)) return;
     const tick = () => setParts(computeParts(targetMs, Date.now()));
     tick();
     const id = setInterval(tick, 1_000);
