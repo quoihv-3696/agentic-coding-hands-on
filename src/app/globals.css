@@ -1,50 +1,97 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* dark: utilities only trigger under a .dark ancestor (never set) — site is dark-only */
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-
-  /* Brand palette */
-  --primary: #ffea9e;
-  --secondary: #00101a;
-  --container: #101417cc;
+  /* ===== Layer 1: SAA brand primitives (single source of truth) ===== */
+  --primary: #ffea9e; /* gold */
+  --secondary: #00101a; /* navy */
+  --container: #101417cc; /* semi-transparent dark surface */
   --error: #d4271d;
 
-  /* Text tokens */
+  /* brand text tokens */
   --primary-1: #ffea9e;
   --primary-2: #00101a;
   --secondary-1: #ffffff;
   --secondary-2: #999999;
+
+  /* ===== Layer 2: shadcn semantic tokens -> brand (dark-first) ===== */
+  --background: var(--secondary); /* navy */
+  --foreground: var(--secondary-1); /* white */
+  --card: #101417; /* container, solid */
+  --card-foreground: var(--secondary-1);
+  --popover: #101417;
+  --popover-foreground: var(--secondary-1);
+  --primary-foreground: var(--secondary); /* navy text on gold */
+  --secondary-foreground: var(--secondary-1);
+  --muted: #1a2026;
+  --muted-foreground: var(--secondary-2); /* #999999 */
+  --accent: #1a2026;
+  --accent-foreground: var(--primary); /* gold */
+  --destructive: var(--error);
+  --border: oklch(1 0 0 / 10%); /* white / 10% */
+  --input: oklch(1 0 0 / 15%);
+  --ring: var(--primary); /* gold focus ring */
+  --radius: 0.625rem;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
+  /* brand utilities: bg-primary, bg-secondary, text-primary-1, text-secondary-2, ... */
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-container: var(--container);
   --color-error: var(--error);
-
-  /* Text tokens -> dùng làm màu chữ: text-primary-1, text-primary-2, text-secondary-1, text-secondary-2 */
   --color-primary-1: var(--primary-1);
   --color-primary-2: var(--primary-2);
   --color-secondary-1: var(--secondary-1);
   --color-secondary-2: var(--secondary-2);
 
+  /* shadcn semantic utilities */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* fonts (Montserrat is the brand sans; Geist from init is intentionally removed) */
   --font-sans: var(--font-montserrat);
   --font-digital: var(--font-digital-numbers);
+
+  /* radius scale used by shadcn components */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
