@@ -1,39 +1,41 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { useCountdown } from "@/lib/countdown/use-countdown";
-import {
-  COUNTDOWN_TARGET_DATE,
-  COUNTDOWN_REDIRECT_PATH,
-} from "@/lib/countdown/config";
-import { CountdownUnit } from "./countdown-unit";
+import { CountdownUnits } from "./countdown-units";
 
-/** Live prelaunch countdown: title + Days/Hours/Minutes, redirects on completion. */
-export function CountdownTimer() {
+/**
+ * Live countdown: a title above the Days/Hours/Minutes units. Behaviour at zero
+ * is caller-driven via `onComplete` (fired once), keeping this component free of
+ * any routing/redirect concerns.
+ */
+export function CountdownTimer({
+  target,
+  onComplete,
+  titleKey = "countdown.title",
+}: {
+  target: Date | null;
+  onComplete?: () => void;
+  titleKey?: string;
+}) {
   const { t } = useTranslations();
-  const router = useRouter();
-  const { days, hours, minutes, isComplete } = useCountdown(
-    COUNTDOWN_TARGET_DATE,
-  );
+  const { days, hours, minutes, isComplete } = useCountdown(target);
+  const fired = useRef(false);
 
   useEffect(() => {
-    if (isComplete) {
-      router.replace(COUNTDOWN_REDIRECT_PATH);
+    if (isComplete && !fired.current) {
+      fired.current = true;
+      onComplete?.();
     }
-  }, [isComplete, router]);
+  }, [isComplete, onComplete]);
 
   return (
     <div className="flex flex-col items-center gap-[clamp(1rem,1.6vw,1.5rem)] text-center">
       <h1 className="text-[clamp(1.25rem,2.4vw,2.25rem)] font-bold leading-tight text-white">
-        {t("countdown.title")}
+        {t(titleKey)}
       </h1>
-      <div className="flex items-start gap-[clamp(1.5rem,4vw,3.75rem)]">
-        <CountdownUnit value={days} max={99} label={t("countdown.days")} />
-        <CountdownUnit value={hours} max={23} label={t("countdown.hours")} />
-        <CountdownUnit value={minutes} max={59} label={t("countdown.minutes")} />
-      </div>
+      <CountdownUnits days={days} hours={hours} minutes={minutes} />
     </div>
   );
 }

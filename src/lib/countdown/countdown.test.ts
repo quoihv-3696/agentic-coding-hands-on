@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { formatUnit } from "./format";
 import { computeParts } from "./use-countdown";
+import { parseEventDateTime } from "./config";
 
 describe("formatUnit", () => {
   describe("valid values within range", () => {
@@ -263,5 +264,23 @@ describe("computeParts", () => {
       expect(parts.minutes).toBe(1);
       expect(parts.minutes).toBeLessThan(60);
     });
+  });
+});
+
+describe("parseEventDateTime", () => {
+  it("parses a valid ISO-8601 datetime", () => {
+    const date = parseEventDateTime("2025-12-31T18:30:00+07:00");
+    expect(date).toBeInstanceOf(Date);
+    expect(date?.getTime()).toBe(Date.parse("2025-12-31T18:30:00+07:00"));
+  });
+
+  it("returns null for missing input", () => {
+    expect(parseEventDateTime(undefined)).toBeNull();
+    expect(parseEventDateTime("")).toBeNull();
+  });
+
+  it("returns null for an invalid datetime string", () => {
+    expect(parseEventDateTime("invalid-format")).toBeNull();
+    expect(parseEventDateTime("not a date")).toBeNull();
   });
 });

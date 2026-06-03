@@ -20,7 +20,7 @@ export function SevenSegmentDisplay({ value }: { value: string }) {
         >
           {/* Frosted-glass cell */}
           <span
-            className="absolute inset-0 rounded-[12px] border-[0.75px] border-[#FFEA9E] opacity-50 backdrop-blur-[25px]"
+            className="absolute inset-0 rounded-xl border-[0.75px] border-[#FFEA9E] opacity-50 backdrop-blur-[25px]"
             style={{
               background:
                 "linear-gradient(180deg, #FFF 0%, rgba(255,255,255,0.10) 100%)",
