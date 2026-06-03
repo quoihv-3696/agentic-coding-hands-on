@@ -18,5 +18,11 @@
     "greeting": "Chào mừng bạn đến với SAA 2025",
     "loggedInAs": "Bạn đang đăng nhập với",
     "logout": "Đăng xuất"
+  },
+  "countdown": {
+    "title": "Sự kiện sẽ bắt đầu sau",
+    "days": "NGÀY",
+    "hours": "GIỜ",
+    "minutes": "PHÚT"
   }
 }
