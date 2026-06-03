@@ -1,17 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { I18nProvider } from "@/lib/i18n/i18n-context";
 import { getLocale } from "@/lib/i18n/get-locale";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Montserrat is the project's main typeface (latin + vietnamese for VN copy).
+const montserrat = Montserrat({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-montserrat",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// "Digital Numbers" — the seven-segment LED face used by the countdown digits.
+const digitalNumbers = localFont({
+  src: "./fonts/digital-numbers.woff",
+  weight: "400",
+  variable: "--font-digital-numbers",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +36,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${digitalNumbers.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <I18nProvider initialLocale={locale}>{children}</I18nProvider>

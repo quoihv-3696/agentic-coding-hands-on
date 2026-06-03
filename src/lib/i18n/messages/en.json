@@ -18,5 +18,11 @@
     "greeting": "Welcome to SAA 2025",
     "loggedInAs": "You are logged in as",
     "logout": "Log out"
+  },
+  "countdown": {
+    "title": "The event starts in",
+    "days": "DAYS",
+    "hours": "HOURS",
+    "minutes": "MINUTES"
   }
 }

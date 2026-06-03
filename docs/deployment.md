@@ -50,6 +50,7 @@ Redirect URLs (and Google redirect URI stays the Supabase callback) to match.
 
 ## Post-Deploy Verification
 - `/login` renders; clicking **Login with Google** opens the Google popup and returns to `/`.
+- `/countdown` renders without authentication (public route).
 - Visiting `/` while unauthenticated redirects to `/login`.
 - Switch VN/EN persists across reload.
 

@@ -51,7 +51,7 @@ Multi-line className string literal normalized differently SSR vs client (whites
 
 - **Blocking**: User must supply real GOOGLE_CLIENT_ID/SECRET + restart supabase for OAuth to work
 - **Technical debt**: SAA logo + ROOT FURTHER display font are approximations (vector assets not extractable from Figma)
-- **Missing**: No automated test suite (no runner installed); test manually via popup flow
+- **Missing**: No automated test suite (no runner installed); test manually via popup flow [resolved in countdown feature: vitest added, `npm test` script now available]
 - **Pending**: Branch not pushed; awaiting review before merge
 
 ## Session Stats
