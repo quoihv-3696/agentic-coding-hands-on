@@ -57,6 +57,7 @@ supabase/config.toml           # local Supabase config (Google provider; edge_ru
 - **File naming:** kebab-case. Keep files **< 200 lines**; split into focused components.
 - Follow **YAGNI / KISS / DRY**. Match surrounding style.
 - Markdown only under `plans/` and `docs/` (don't scatter `.md` files).
+- **Interactive UI components** (dropdowns, dialogs, menus, toggles) — use a shadcn/ui primitive from `src/components/ui/` rather than rolling your own. Marketing/layout sections stay bespoke Tailwind.
 
 ## Next.js 16 Gotchas (≠ training data — see AGENTS.md)
 
