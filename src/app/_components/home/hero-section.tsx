@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { HeroCountdown } from "../countdown/hero-countdown";
+import rootFurtherLogo from "@/assets/images/login/logo.png";
 
 /**
  * Homepage hero content: the "ROOT FURTHER" wordmark, the live event countdown,
@@ -17,7 +18,7 @@ export function HeroSection() {
   return (
     <section className="flex flex-col items-start gap-10 px-6 pb-24 pt-28 sm:px-10 lg:px-36 lg:pb-32 lg:pt-36">
       <Image
-        src="/login/logo.png"
+        src={rootFurtherLogo}
         alt={t("home.hero.title")}
         width={290}
         height={134}

@@ -1,10 +1,26 @@
 "use client";
 
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { AWARD_CATEGORIES, awardHref } from "@/lib/awards/categories";
+import topTalent from "@/assets/images/home/awards/top-talent.png";
+import topProject from "@/assets/images/home/awards/top-project.png";
+import topProjectLeader from "@/assets/images/home/awards/top-project-leader.png";
+import bestManager from "@/assets/images/home/awards/best-manager.png";
+import signature2025Creator from "@/assets/images/home/awards/signature-2025-creator.png";
+import mvp from "@/assets/images/home/awards/mvp.png";
+
+/** Award graphic keyed by category slug. */
+const AWARD_IMAGES: Record<string, StaticImageData> = {
+  "top-talent": topTalent,
+  "top-project": topProject,
+  "top-project-leader": topProjectLeader,
+  "best-manager": bestManager,
+  "signature-2025-creator": signature2025Creator,
+  mvp,
+};
 
 /**
  * "Hệ thống giải thưởng" — section header + a responsive grid of award category
@@ -37,7 +53,7 @@ export function AwardsSection() {
             >
               <div className="relative aspect-square">
                 <Image
-                  src={`/home/awards/${c.slug}.png`}
+                  src={AWARD_IMAGES[c.slug]}
                   alt=""
                   aria-hidden
                   fill

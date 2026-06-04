@@ -3,6 +3,7 @@ import { SiteHeader } from "./site-header";
 import { HeroSection } from "./hero-section";
 import { RootFurtherSection } from "./root-further-section";
 import { AwardsSection } from "./awards-section";
+import heroBg from "@/assets/images/home/hero-bg.png";
 
 /**
  * Public SAA 2025 homepage.
@@ -19,7 +20,7 @@ export function Homepage({ authed }: { authed: boolean }) {
     <div className="relative min-h-screen overflow-hidden bg-[#00101A]">
       {/* Layer 2: Key Visual at the top, aspect preserved. */}
       <Image
-        src="/home/hero-bg.png"
+        src={heroBg}
         alt=""
         aria-hidden
         width={1512}

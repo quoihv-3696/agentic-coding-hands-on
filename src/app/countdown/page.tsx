@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { PrelaunchCountdown } from "../_components/countdown/prelaunch-countdown";
+import countdownBg from "@/assets/images/countdown/bg.png";
 
 /**
  * Public prelaunch countdown page. Three stacked layers per the design:
@@ -18,7 +19,7 @@ export default function CountdownPage() {
       {/* Layer 2: the countdown Key Visual (next/image emits optimized,
          viewport-sized variants of the large source PNG). */}
       <Image
-        src="/countdown/bg.png"
+        src={countdownBg}
         alt=""
         aria-hidden
         fill

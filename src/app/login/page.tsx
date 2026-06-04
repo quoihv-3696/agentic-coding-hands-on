@@ -2,6 +2,7 @@ import Image from "next/image";
 import { LoginHeader } from "./_components/login-header";
 import { LoginHero } from "./_components/login-hero";
 import { LoginFooter } from "./_components/login-footer";
+import loginBg from "@/assets/images/login/bg.png";
 
 /**
  * Login page. Full-bleed background artwork (the clean Key Visual layer) with a
@@ -16,7 +17,7 @@ export default function LoginPage() {
       {/* Full-viewport background artwork — next/image serves optimized
          (WebP/AVIF), viewport-sized variants of the large source PNG. */}
       <Image
-        src="/login/bg.png"
+        src={loginBg}
         alt=""
         aria-hidden
         fill

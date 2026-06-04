@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "@/lib/i18n/i18n-context";
+import titleImage from "@/assets/images/home/title.png";
 
 /**
  * "Root Further" theme content: the large ROOT FURTHER wordmark, the body
@@ -16,7 +17,7 @@ export function RootFurtherSection() {
     <section className="px-6 py-20 sm:px-10 lg:py-28">
       <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-white">
         <Image
-          src="/home/title.png"
+          src={titleImage}
           alt={t("home.rootFurther.title")}
           width={290}
           height={134}

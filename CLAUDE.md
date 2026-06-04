@@ -10,7 +10,7 @@ Web app for **Sun\* Annual Awards 2025**. Auth-gated; public entry is the Google
 |-------|--------|-------|
 | Framework | **Next.js 16.2.7** (App Router) | Turbopack; **React Compiler enabled** (`reactCompiler: true`) |
 | UI | **React 19.2** | Server Components by default; `"use client"` only when hooks/interactivity needed |
-| Styling | **Tailwind CSS v4** | Config lives in `src/app/globals.css` (`@import "tailwindcss"` + `@theme inline`). **No `tailwind.config.js`** |
+| Styling | **Tailwind CSS v4** + **shadcn/ui** | Config lives in `src/app/globals.css`. **No `tailwind.config.js`**. shadcn config: `components.json`; `cn()` helper: `src/lib/utils.ts`; generated components: `src/components/ui/`. globals.css has a **2-layer token system, dark-first**: Layer 1 = SAA brand primitives (`--primary` gold `#FFEA9E`, `--secondary` navy `#00101A`, etc.); Layer 2 = shadcn semantic tokens pointing to brand primitives. Base theme is dark (navy). |
 | Language | **TypeScript** (strict) | Path alias `@/*` → `src/*` |
 | Auth/DB | **Supabase** via **`@supabase/ssr`** | Local dev via Supabase CLI + Docker (OrbStack) |
 | i18n | Custom cookie-based VN/EN | No library, no locale URL routing |
@@ -28,11 +28,14 @@ src/
 │   ├── login/                  # /login route + _components (header, hero, footer, google-button, language-switcher)
 │   └── auth/callback/route.ts  # OAuth code exchange; popup posts message to opener + closes
 ├── proxy.ts                    # Next 16 proxy: session refresh + route guard (replaces middleware)
-├── components/                 # shared presentational: icons, flags
+├── components/
+│   ├── ui/                     # shadcn/ui generated components (cherry-picked)
+│   └── ...                     # shared presentational: icons, flags
 └── lib/
     ├── supabase/               # client (browser), server (async cookies), update-session (proxy helper)
     ├── auth/                   # sign-in-with-google (popup flow)
-    └── i18n/                   # config, get-locale (server), i18n-context (client), messages/{vi,en}.json
+    ├── i18n/                   # config, get-locale (server), i18n-context (client), messages/{vi,en}.json
+    └── utils.ts                # cn() helper (clsx + tailwind-merge)
 supabase/config.toml           # local Supabase config (Google provider; edge_runtime disabled)
 ```
 
@@ -54,6 +57,7 @@ supabase/config.toml           # local Supabase config (Google provider; edge_ru
 - **File naming:** kebab-case. Keep files **< 200 lines**; split into focused components.
 - Follow **YAGNI / KISS / DRY**. Match surrounding style.
 - Markdown only under `plans/` and `docs/` (don't scatter `.md` files).
+- **Interactive UI components** (dropdowns, dialogs, menus, toggles) — use a shadcn/ui primitive from `src/components/ui/` rather than rolling your own. Marketing/layout sections stay bespoke Tailwind.
 
 ## Next.js 16 Gotchas (≠ training data — see AGENTS.md)
 
