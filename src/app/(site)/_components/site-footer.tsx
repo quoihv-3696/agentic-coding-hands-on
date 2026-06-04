@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import footerLogo from "@/assets/images/home/footer-logo.png";
+import { Button } from "@/components/button";
 
 export function SiteFooter() {
   const { t } = useTranslations();
@@ -32,39 +33,24 @@ export function SiteFooter() {
             className="flex flex-wrap items-center gap-2 sm:gap-0"
           >
             {/* About SAA 2025 — scroll to top */}
-            <button
-              onClick={scrollToTop}
-              className="px-4 py-4 text-base font-bold leading-6 tracking-[0.15px] text-white transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
+            <Button onClick={scrollToTop} variant="text">
               {t("home.footer.aboutSaa")}
-            </button>
+            </Button>
 
             {/* Award Information — /awards */}
-            <Link
-              href="/awards"
-              className="bg-primary/10 px-4 py-4 text-base font-bold leading-6 tracking-[0.15px] text-white transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              style={{ textShadow: "0 4px 4px rgba(0,0,0,0.25), 0 0 6px #FAE287" }}
-            >
-              {t("home.footer.awardsInfo")}
-            </Link>
-
+            <Button variant="text">
+              <Link href="/awards">{t("home.footer.awardsInfo")}</Link>
+            </Button>
             {/* Sun* Kudos — /kudos */}
-            <Link
-              href="/kudos"
-              className="px-4 py-4 text-base font-bold leading-6 tracking-[0.15px] text-white transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              {t("home.footer.kudos")}
-            </Link>
+            <Button variant="text">
+              <Link href="/kudos">{t("home.footer.kudos")}</Link>
+            </Button>
 
             {/* Community Standards — no route yet; real disabled control so AT
                 announces it as unavailable. TODO: link when the route exists. */}
-            <button
-              type="button"
-              disabled
-              className="px-4 py-4 text-base font-bold leading-6 tracking-[0.15px] text-white/50"
-            >
-              {t("home.footer.communityStandards")}
-            </button>
+            <Button variant="text">
+              <Link href="#">{t("home.footer.communityStandards")}</Link>
+            </Button>
           </nav>
         </div>
 
