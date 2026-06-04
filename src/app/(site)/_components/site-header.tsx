@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { BellIcon } from "@/components/icons";
-import { LanguageMenu } from "./language-menu";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { AccountMenu } from "./account-menu";
 import saaLogo from "@/assets/images/saa-logo.svg";
 
@@ -17,20 +18,23 @@ const NAV: { key: NavKey; labelKey: string; href: string }[] = [
 ];
 
 /**
- * Sticky homepage header: logo + primary nav + right-hand controls.
- * Auth-aware controls (bell, account) show only when `authed`. Dropdown/menu
- * behaviour is wired in a later phase; this is the presentational shell.
+ * Shared sticky site header: logo + primary nav + right-hand controls.
+ * Rendered once by the (site) layout, so it persists across `/`, `/awards`
+ * and `/kudos`; the active nav item is derived from the current pathname.
+ * Auth-aware controls (bell, account) show only when `authed`.
  */
 export function SiteHeader({
   authed = false,
   isAdmin = false,
-  activeNav = "about",
 }: {
   authed?: boolean;
   isAdmin?: boolean;
-  activeNav?: NavKey;
 }) {
   const { t } = useTranslations();
+  const pathname = usePathname();
+  const activeKey = NAV.find((n) =>
+    n.href === "/" ? pathname === "/" : pathname.startsWith(n.href),
+  )?.key;
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex h-20 items-center justify-between bg-[#101417]/80 px-6 backdrop-blur-md sm:px-10 lg:px-36">
@@ -41,7 +45,7 @@ export function SiteHeader({
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {NAV.map(({ key, labelKey, href }) => {
-            const active = key === activeNav;
+            const active = key === activeKey;
             return (
               <Link
                 key={key}
@@ -72,7 +76,7 @@ export function SiteHeader({
             <span className="absolute right-2 top-2 size-2 rounded-full bg-red-500" />
           </button>
         )}
-        <LanguageMenu />
+        <LanguageSwitcher />
         {authed && <AccountMenu isAdmin={isAdmin} />}
       </div>
     </header>

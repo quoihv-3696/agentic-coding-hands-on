@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { SiteHeader } from "./site-header";
 import { HeroSection } from "./hero-section";
 import { RootFurtherSection } from "./root-further-section";
 import { AwardsSection } from "./awards-section";
@@ -13,15 +12,9 @@ import heroBg from "@/assets/images/home/hero-bg.png";
  *   2. the Key Visual artwork pinned to the top at its natural aspect ratio
  *      (not cover-cropped) — the page colour shows below it,
  *   3. a "Cover" gradient layer (its own 1512×1480 box) above the artwork.
- * Content (header + sections) sits above all three.
+ * The shared site header lives in the (site) layout and floats above all three.
  */
-export function Homepage({
-  authed,
-  isAdmin,
-}: {
-  authed: boolean;
-  isAdmin: boolean;
-}) {
+export function Homepage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#00101A]">
       {/* Layer 2: Key Visual at the top, aspect preserved. */}
@@ -44,9 +37,8 @@ export function Homepage({
         }}
       />
 
-      {/* Content */}
+      {/* Content (the shared header is rendered by the (site) layout). */}
       <div className="relative z-10">
-        <SiteHeader authed={authed} isAdmin={isAdmin} activeNav="about" />
         <main>
           <HeroSection />
           <RootFurtherSection />

@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { UserIcon, ChevronDownIcon, DashboardIcon } from "@/components/icons";
-import { Dropdown, type DropdownItem } from "@/components/common/dropdown";
+import { Dropdown, type DropdownItem } from "@/components/dropdown";
+import { Button } from "@/components/button";
 
 /**
  * Home-header account menu: avatar trigger -> Profile / Admin Dashboard / Logout
@@ -53,13 +54,13 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
 
   return (
     <Dropdown items={items} onSelect={handleSelect} align="end">
-      <button
-        type="button"
+      <Button
+        variant="icon"
         aria-label={t("home.header.account")}
-        className="grid size-10 place-items-center rounded-full text-white/90 outline-none transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-ring"
+        className="size-10 rounded-sm border border-border-detail text-white/90"
       >
         <UserIcon className="size-5" />
-      </button>
+      </Button>
     </Dropdown>
   );
 }

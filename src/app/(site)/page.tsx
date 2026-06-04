@@ -1,14 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { Homepage } from "./_components/home/homepage";
+import { Homepage } from "./_components/homepage";
 
-/** Public SAA 2025 homepage. Reads the session only to drive the auth-aware header. */
-export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const isAdmin = user?.app_metadata?.role === "admin";
-
-  return <Homepage authed={!!user} isAdmin={isAdmin} />;
+/** Public SAA 2025 homepage. The auth-aware header lives in the (site) layout. */
+export default function Home() {
+  return <Homepage />;
 }

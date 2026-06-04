@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { ArrowUpRightIcon } from "@/components/icons";
-import { HeroCountdown } from "../countdown/hero-countdown";
+import { HeroCountdown } from "@/components/countdown/hero-countdown";
 import rootFurtherLogo from "@/assets/images/login/logo.png";
 
 /**
