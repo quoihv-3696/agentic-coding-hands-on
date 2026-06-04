@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { LanguageSwitcher } from "./language-switcher";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import saaLogo from "@/assets/images/saa-logo.svg";
 
 export function LoginHeader() {

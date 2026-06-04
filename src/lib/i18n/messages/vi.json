@@ -1,10 +1,9 @@
 {
-  "language": { "vn": "VN", "en": "EN" },
+  "language": { "vn": "VN", "en": "EN", "switch": "Chuyển đổi ngôn ngữ" },
   "login": {
     "welcomeLine1": "Bắt đầu hành trình của bạn cùng SAA 2025.",
     "welcomeLine2": "Đăng nhập để khám phá!",
     "button": "Đăng nhập với Google",
-    "switchLanguage": "Chuyển đổi ngôn ngữ",
     "footer": "Bản quyền thuộc về Sun* © 2025",
     "errors": {
       "startFailed": "Không thể bắt đầu đăng nhập Google. Vui lòng thử lại.",
@@ -20,7 +19,6 @@
       "awardsInfo": "Awards Information",
       "kudos": "Sun* Kudos",
       "notifications": "Thông báo",
-      "switchLanguage": "Chuyển đổi ngôn ngữ",
       "account": "Tài khoản",
       "profile": "Hồ sơ",
       "adminDashboard": "Trang quản trị"

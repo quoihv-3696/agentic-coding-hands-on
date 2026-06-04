@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { PrelaunchCountdown } from "../_components/countdown/prelaunch-countdown";
+import { PrelaunchCountdown } from "@/components/countdown/prelaunch-countdown";
 import countdownBg from "@/assets/images/countdown/bg.png";
 
 /**

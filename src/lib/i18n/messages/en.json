@@ -1,10 +1,9 @@
 {
-  "language": { "vn": "VN", "en": "EN" },
+  "language": { "vn": "VN", "en": "EN", "switch": "Switch language" },
   "login": {
     "welcomeLine1": "Start your journey with SAA 2025.",
     "welcomeLine2": "Log in to explore!",
     "button": "Login with Google",
-    "switchLanguage": "Switch language",
     "footer": "Copyright © Sun* 2025",
     "errors": {
       "startFailed": "Couldn't start Google sign-in. Please try again.",
@@ -20,7 +19,6 @@
       "awardsInfo": "Awards Information",
       "kudos": "Sun* Kudos",
       "notifications": "Notifications",
-      "switchLanguage": "Switch language",
       "account": "Account",
       "profile": "Profile",
       "adminDashboard": "Admin Dashboard"
