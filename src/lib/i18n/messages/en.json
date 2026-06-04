@@ -58,14 +58,19 @@
     "kudos": {
       "label": "Recognition movement",
       "title": "Sun* Kudos",
-      "description": "",
+      "description": "NEW AT SAA 2025\nA peer recognition and appreciation initiative — happening for the first time for all Sunners. Launching in November 2025, it encourages Sun* people to share recognition and thanks to colleagues on the system announced by the organizing committee. This will serve as input for the Heads Council when selecting award recipients.",
       "detail": "Details"
     },
     "footer": {
       "aboutSaa": "About SAA 2025",
       "awardsInfo": "Awards Information",
       "kudos": "Sun* Kudos",
+      "communityStandards": "Community standards",
       "copyright": "Copyright © Sun* 2025"
+    },
+    "widget": {
+      "label": "Quick actions",
+      "comingSoon": "Features coming soon."
     }
   },
   "countdown": {

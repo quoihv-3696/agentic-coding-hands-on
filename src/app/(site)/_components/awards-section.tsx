@@ -3,7 +3,7 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
-import { ArrowUpRightIcon } from "@/components/icons";
+import { UpIcon } from "@/components/icons";
 import { AWARD_CATEGORIES, awardHref } from "@/lib/awards/categories";
 import topTalent from "@/assets/images/home/awards/top-talent.png";
 import topProject from "@/assets/images/home/awards/top-project.png";
@@ -11,6 +11,8 @@ import topProjectLeader from "@/assets/images/home/awards/top-project-leader.png
 import bestManager from "@/assets/images/home/awards/best-manager.png";
 import signature2025Creator from "@/assets/images/home/awards/signature-2025-creator.png";
 import mvp from "@/assets/images/home/awards/mvp.png";
+import { Button } from "@/components/button";
+import { Separator } from "@/components/ui/separator";
 
 /** Award graphic keyed by category slug. */
 const AWARD_IMAGES: Record<string, StaticImageData> = {
@@ -32,17 +34,17 @@ export function AwardsSection() {
   const { t } = useTranslations();
 
   return (
-    <section className="px-6 py-20 sm:px-10 lg:px-36 lg:py-28">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-sm font-medium uppercase tracking-wide text-white/60">
-          {t("home.awards.sectionLabel")}
-        </p>
-        <h2 className="mt-2 text-3xl font-bold text-[#FFD466] sm:text-4xl">
-          {t("home.awards.sectionTitle")}
-        </h2>
-        <p className="mt-3 max-w-2xl text-white/70">
-          {t("home.awards.sectionDesc")}
-        </p>
+    <section className="">
+      <div className="mx-auto max-w-306">
+        <div className="space-y-4">
+          <p className="text-sm font-medium uppercase tracking-wide text-white/60">
+            {t("home.awards.sectionLabel")}
+          </p>
+          <Separator className="w-full bg-white/20" />
+          <h2 className="mt-2 text-3xl font-bold text-primary sm:text-4xl">
+            {t("home.awards.sectionTitle")}
+          </h2>
+        </div>
 
         <div className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-3 lg:gap-6">
           {AWARD_CATEGORIES.map((c) => (
@@ -62,14 +64,19 @@ export function AwardsSection() {
                 />
               </div>
 
-              <h3 className="text-lg font-bold text-white">{t(c.titleKey)}</h3>
-              <p className="line-clamp-2 text-sm leading-relaxed text-white/60">
-                {t(c.descKey)}
-              </p>
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#FFD466]">
-                {t("home.awards.detail")}
-                <ArrowUpRightIcon className="size-4" />
-              </span>
+              <div className="px-2">
+                <h3 className="text-2xl text-primary">{t(c.titleKey)}</h3>
+                <p className="line-clamp-2 text-sm leading-relaxed text-white/60">
+                  {t(c.descKey)}
+                </p>
+                <Button
+                  variant="text"
+                  className="w-fit p-0"
+                  rightIcon={<UpIcon />}
+                >
+                  {t("home.awards.detail")}
+                </Button>
+              </div>
             </Link>
           ))}
         </div>

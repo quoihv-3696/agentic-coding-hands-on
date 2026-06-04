@@ -53,7 +53,7 @@ export function SiteHeader({
                 aria-current={active ? "page" : undefined}
                 className={
                   active
-                    ? "font-semibold text-[#FFD466] underline underline-offset-8"
+                    ? "font-semibold text-primary underline underline-offset-8"
                     : "font-medium text-white/90 transition-colors hover:text-white"
                 }
               >

@@ -14,8 +14,8 @@ export function RootFurtherSection() {
   const body2 = t("home.rootFurther.body2").split("\n");
 
   return (
-    <section className="px-6 py-20 sm:px-10 lg:py-28">
-      <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-white">
+    <section className="">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 text-white">
         <Image
           src={titleImage}
           alt={t("home.rootFurther.title")}

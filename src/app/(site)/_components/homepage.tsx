@@ -2,6 +2,9 @@ import Image from "next/image";
 import { HeroSection } from "./hero-section";
 import { RootFurtherSection } from "./root-further-section";
 import { AwardsSection } from "./awards-section";
+import { KudosSection } from "./kudos-section";
+import { SiteFooter } from "./site-footer";
+import { FloatingWidget } from "./floating-widget";
 import heroBg from "@/assets/images/home/hero-bg.png";
 
 /**
@@ -39,12 +42,17 @@ export function Homepage() {
 
       {/* Content (the shared header is rendered by the (site) layout). */}
       <div className="relative z-10">
-        <main>
+        <main className="space-y-30 px-36 py-24">
           <HeroSection />
           <RootFurtherSection />
           <AwardsSection />
+          <KudosSection />
         </main>
+        <SiteFooter />
       </div>
+
+      {/* Floating widget — fixed position, renders above all content */}
+      <FloatingWidget />
     </div>
   );
 }
