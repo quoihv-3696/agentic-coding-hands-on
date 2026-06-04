@@ -13,7 +13,7 @@ export function GoogleLoginButton({
   onClick,
   loading = false,
   disabled = false,
-  label = "LOGIN With Google",
+  label = "",
 }: GoogleLoginButtonProps) {
   return (
     <button

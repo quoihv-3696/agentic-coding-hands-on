@@ -1,10 +1,9 @@
 {
-  "language": { "vn": "VN", "en": "EN" },
+  "language": { "vn": "VN", "en": "EN", "switch": "Switch language" },
   "login": {
     "welcomeLine1": "Start your journey with SAA 2025.",
     "welcomeLine2": "Log in to explore!",
     "button": "Login with Google",
-    "switchLanguage": "Switch language",
     "footer": "Copyright © Sun* 2025",
     "errors": {
       "startFailed": "Couldn't start Google sign-in. Please try again.",
@@ -14,16 +13,13 @@
     }
   },
   "home": {
-    "title": "SAA 2025 Home",
-    "greeting": "Welcome to SAA 2025",
-    "loggedInAs": "You are logged in as",
     "logout": "Log out",
     "header": {
       "aboutSaa": "About SAA 2025",
       "awardsInfo": "Awards Information",
       "kudos": "Sun* Kudos",
       "notifications": "Notifications",
-      "switchLanguage": "Switch language",
+      "unread": "Unread notifications",
       "account": "Account",
       "profile": "Profile",
       "adminDashboard": "Admin Dashboard"
@@ -49,7 +45,6 @@
     "awards": {
       "sectionLabel": "Sun* annual awards 2025",
       "sectionTitle": "Awards system",
-      "sectionDesc": "Categories are awarded to the TOP most outstanding individuals.",
       "detail": "Details",
       "cards": {
         "topTalent": { "title": "Top Talent", "desc": "Honoring the top individuals excelling in every aspect" },
@@ -63,14 +58,19 @@
     "kudos": {
       "label": "Recognition movement",
       "title": "Sun* Kudos",
-      "description": "",
+      "description": "NEW AT SAA 2025\nA peer recognition and appreciation initiative — happening for the first time for all Sunners. Launching in November 2025, it encourages Sun* people to share recognition and thanks to colleagues on the system announced by the organizing committee. This will serve as input for the Heads Council when selecting award recipients.",
       "detail": "Details"
     },
     "footer": {
       "aboutSaa": "About SAA 2025",
       "awardsInfo": "Awards Information",
       "kudos": "Sun* Kudos",
+      "communityStandards": "Community standards",
       "copyright": "Copyright © Sun* 2025"
+    },
+    "widget": {
+      "label": "Quick actions",
+      "comingSoon": "Features coming soon."
     }
   },
   "countdown": {

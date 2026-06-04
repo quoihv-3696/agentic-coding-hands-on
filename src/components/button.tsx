@@ -57,11 +57,31 @@ export function Button({
   selected,
   leftIcon,
   rightIcon,
+  asChild,
   children,
   ...props
 }: ButtonProps) {
+  const classes = cn(saaButton({ variant, selected }), className);
+
+  // asChild: render as the passed element (e.g. a Next <Link>) so CTAs stay a
+  // single valid <a> instead of an invalid <a><button> nesting. The icons are
+  // injected INTO the child (Radix Slot requires exactly one child).
+  if (asChild && React.isValidElement<{ children?: React.ReactNode }>(children)) {
+    return (
+      <UIButton asChild className={classes} {...props}>
+        {React.cloneElement(
+          children,
+          undefined,
+          leftIcon,
+          children.props.children,
+          rightIcon,
+        )}
+      </UIButton>
+    );
+  }
+
   return (
-    <UIButton className={cn(saaButton({ variant, selected }), className)} {...props}>
+    <UIButton className={classes} {...props}>
       {leftIcon}
       {children}
       {rightIcon}

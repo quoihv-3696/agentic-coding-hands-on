@@ -22,19 +22,30 @@ Web app for **Sun\* Annual Awards 2025**. Auth-gated; public entry is the Google
 src/
 ├── app/
 │   ├── layout.tsx              # async root layout: reads locale, wraps <I18nProvider>, sets <html lang>
-│   ├── page.tsx                # protected home (getUser() → redirect /login if no session)
-│   ├── globals.css             # Tailwind v4 entry
-│   ├── _components/            # home-view, logout-button
-│   ├── login/                  # /login route + _components (header, hero, footer, google-button, language-switcher)
+│   ├── globals.css             # Tailwind v4 entry + 2-layer token system
+│   ├── (site)/                 # route group: public marketing routes sharing one layout (URLs unchanged)
+│   │   ├── layout.tsx          # getUser() once → renders the shared <SiteHeader> over its children
+│   │   ├── page.tsx            # / (public auth-aware homepage)
+│   │   ├── _components/        # route-private: site-header, account-menu, homepage shell + hero/root-further/awards sections
+│   │   ├── awards/page.tsx     # /awards stub
+│   │   └── kudos/page.tsx      # /kudos stub
+│   ├── login/                  # /login route + _components (header, hero, footer, google-button)
+│   ├── countdown/page.tsx      # /countdown (standalone — outside (site), no site header)
 │   └── auth/callback/route.ts  # OAuth code exchange; popup posts message to opener + closes
 ├── proxy.ts                    # Next 16 proxy: session refresh + route guard (replaces middleware)
-├── components/
+├── components/                 # SHARED across ≥2 routes only
 │   ├── ui/                     # shadcn/ui generated components (cherry-picked)
-│   └── ...                     # shared presentational: icons, flags
+│   ├── countdown/              # shared countdown UI (logic lives in lib/countdown)
+│   ├── button.tsx, dropdown.tsx # composed primitives layered over ui/
+│   ├── language-switcher.tsx   # shared VN/EN switcher (used by login + site headers)
+│   ├── coming-soon.tsx         # shared stub-page placeholder
+│   └── flags.tsx, icons.tsx    # shared presentational
 └── lib/
     ├── supabase/               # client (browser), server (async cookies), update-session (proxy helper)
     ├── auth/                   # sign-in-with-google (popup flow)
     ├── i18n/                   # config, get-locale (server), i18n-context (client), messages/{vi,en}.json
+    ├── awards/                 # categories.ts (canonical slugs + award href builder)
+    ├── countdown/              # countdown logic (parse env datetime, useCountdown, format) + tests
     └── utils.ts                # cn() helper (clsx + tailwind-merge)
 supabase/config.toml           # local Supabase config (Google provider; edge_runtime disabled)
 ```
@@ -58,6 +69,17 @@ supabase/config.toml           # local Supabase config (Google provider; edge_ru
 - Follow **YAGNI / KISS / DRY**. Match surrounding style.
 - Markdown only under `plans/` and `docs/` (don't scatter `.md` files).
 - **Interactive UI components** (dropdowns, dialogs, menus, toggles) — use a shadcn/ui primitive from `src/components/ui/` rather than rolling your own. Marketing/layout sections stay bespoke Tailwind.
+
+### Component organization (colocation — IMPORTANT)
+
+- **Where a component lives is decided by reuse scope:**
+  - Used by **≥2 routes** → `src/components/` (cross-route shared). `ui/` = raw shadcn; composed primitives (`button`, `dropdown`) and shared features (`language-switcher`, `countdown/`, `coming-soon`, `flags`, `icons`) sit alongside it.
+  - Private to **one route or route-group** → that route's **`_components/`** folder (leading underscore = Next.js private, non-routable). e.g. `app/(site)/_components/`, `app/login/_components/`.
+- **No app-wide `common/` dumping ground.** "Shared" is not a single bucket — sort by `ui/` (shadcn) vs composed/shared vs route-private.
+- **A component graduates** from `_components/` up to `src/components/` only when a 2nd route needs it — not pre-emptively (YAGNI).
+- **Breaking a screen down:** one component per visual section, each in the route's `_components/`; keep each <200 lines. The page/shell composes them.
+- **Feature split:** UI in `src/components/<feature>/`, its logic/hooks/types in `src/lib/<feature>/` (see `countdown`).
+- **Route groups (`(group)/`)** share chrome (header, auth-derivation) via the group's `layout.tsx` across a set of routes without changing URLs. Derive per-route state (e.g. active nav) inside the shared component via `usePathname`, not props.
 
 ## Next.js 16 Gotchas (≠ training data — see AGENTS.md)
 

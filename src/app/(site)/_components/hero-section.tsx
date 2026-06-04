@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
-import { ArrowUpRightIcon } from "@/components/icons";
-import { HeroCountdown } from "../countdown/hero-countdown";
+import { UpIcon } from "@/components/icons";
+import { HeroCountdown } from "@/components/countdown/hero-countdown";
 import rootFurtherLogo from "@/assets/images/login/logo.png";
+import { Button } from "@/components/button";
 
 /**
  * Homepage hero content: the "ROOT FURTHER" wordmark, the live event countdown,
@@ -16,7 +17,7 @@ export function HeroSection() {
   const { t } = useTranslations();
 
   return (
-    <section className="flex flex-col items-start gap-10 px-6 pb-24 pt-28 sm:px-10 lg:px-36 lg:pb-32 lg:pt-36">
+    <section className="flex flex-col items-start gap-10 pt-20 mx-auto max-w-306">
       <Image
         src={rootFurtherLogo}
         alt={t("home.hero.title")}
@@ -47,20 +48,12 @@ export function HeroSection() {
 
       {/* CTAs — solid (awards) + outline (kudos), both rounded-8 with the arrow icon */}
       <div className="flex flex-wrap gap-4">
-        <Link
-          href="/awards"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#FFEA9E] px-6 py-4 font-semibold text-[#00101A] transition-colors hover:bg-[#fff0bd]"
-        >
-          {t("home.hero.ctaAwards")}
-          <ArrowUpRightIcon className="size-5" />
-        </Link>
-        <Link
-          href="/kudos"
-          className="inline-flex items-center gap-2 rounded-lg border border-[#FFEA9E] px-6 py-4 font-semibold text-[#FFEA9E] transition-colors hover:bg-[#FFEA9E] hover:text-[#00101A]"
-        >
-          {t("home.hero.ctaKudos")}
-          <ArrowUpRightIcon className="size-5" />
-        </Link>
+        <Button asChild variant="primary" rightIcon={<UpIcon />}>
+          <Link href="/awards">{t("home.hero.ctaAwards")}</Link>
+        </Button>
+        <Button asChild variant="secondary" rightIcon={<UpIcon />}>
+          <Link href="/kudos">{t("home.hero.ctaKudos")}</Link>
+        </Button>
       </div>
     </section>
   );

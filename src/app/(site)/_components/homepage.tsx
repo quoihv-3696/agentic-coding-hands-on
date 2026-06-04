@@ -1,8 +1,10 @@
 import Image from "next/image";
-import { SiteHeader } from "./site-header";
 import { HeroSection } from "./hero-section";
 import { RootFurtherSection } from "./root-further-section";
 import { AwardsSection } from "./awards-section";
+import { KudosSection } from "./kudos-section";
+import { SiteFooter } from "./site-footer";
+import { FloatingWidget } from "./floating-widget";
 import heroBg from "@/assets/images/home/hero-bg.png";
 
 /**
@@ -13,11 +15,11 @@ import heroBg from "@/assets/images/home/hero-bg.png";
  *   2. the Key Visual artwork pinned to the top at its natural aspect ratio
  *      (not cover-cropped) — the page colour shows below it,
  *   3. a "Cover" gradient layer (its own 1512×1480 box) above the artwork.
- * Content (header + sections) sits above all three.
+ * The shared site header lives in the (site) layout and floats above all three.
  */
-export function Homepage({ authed }: { authed: boolean }) {
+export function Homepage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#00101A]">
+    <div className="relative min-h-screen overflow-hidden bg-secondary">
       {/* Layer 2: Key Visual at the top, aspect preserved. */}
       <Image
         src={heroBg}
@@ -38,15 +40,19 @@ export function Homepage({ authed }: { authed: boolean }) {
         }}
       />
 
-      {/* Content */}
+      {/* Content (the shared header is rendered by the (site) layout). */}
       <div className="relative z-10">
-        <SiteHeader authed={authed} activeNav="about" />
-        <main>
+        <main className="space-y-30 px-36 py-24">
           <HeroSection />
           <RootFurtherSection />
           <AwardsSection />
+          <KudosSection />
         </main>
+        <SiteFooter />
       </div>
+
+      {/* Floating widget — fixed position, renders above all content */}
+      <FloatingWidget />
     </div>
   );
 }
