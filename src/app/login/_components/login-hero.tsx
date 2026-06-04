@@ -9,6 +9,7 @@ import {
   signInWithGoogle,
   SIGN_IN_ERROR_CODES,
 } from "@/lib/auth/sign-in-with-google";
+import rootFurtherLogo from "@/assets/images/login/logo.png";
 
 export function LoginHero() {
   const { t } = useTranslations();
@@ -38,7 +39,7 @@ export function LoginHero() {
     <main className="relative z-10 flex flex-1 flex-col justify-center px-8 pb-20 pt-28 sm:px-12 md:px-16 lg:px-24">
       {/* ROOT FURTHER wordmark (brand image asset from the design) */}
       <Image
-        src="/login/logo.png"
+        src={rootFurtherLogo}
         alt="ROOT FURTHER"
         width={451}
         height={200}

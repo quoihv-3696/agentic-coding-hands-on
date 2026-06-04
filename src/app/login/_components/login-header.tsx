@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { LanguageSwitcher } from "./language-switcher";
+import saaLogo from "@/assets/images/saa-logo.svg";
 
 export function LoginHeader() {
   return (
@@ -7,7 +8,7 @@ export function LoginHeader() {
       {/* Logo */}
       <div className="flex items-center">
         <Image
-          src="/saa-logo.svg"
+          src={saaLogo}
           alt="Sun* Annual Awards 2025"
           width={64}
           height={56}

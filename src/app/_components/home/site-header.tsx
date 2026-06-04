@@ -6,6 +6,7 @@ import { useTranslations } from "@/lib/i18n/i18n-context";
 import { BellIcon } from "@/components/icons";
 import { LanguageMenu } from "./language-menu";
 import { AccountMenu } from "./account-menu";
+import saaLogo from "@/assets/images/saa-logo.svg";
 
 type NavKey = "about" | "awards" | "kudos";
 
@@ -34,7 +35,7 @@ export function SiteHeader({
       {/* Left: logo + primary nav */}
       <div className="flex items-center gap-8 lg:gap-16">
         <Link href="/" aria-label="SAA 2025" className="shrink-0">
-          <Image src="/saa-logo.svg" alt="SAA 2025" width={52} height={56} priority />
+          <Image src={saaLogo} alt="SAA 2025" width={52} height={56} priority />
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {NAV.map(({ key, labelKey, href }) => {
