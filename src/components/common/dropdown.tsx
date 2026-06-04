@@ -9,9 +9,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-const SELECTED_GLOW =
-  "[filter:drop-shadow(0_0_6px_#FAE287)_drop-shadow(0_4px_4px_rgba(0,0,0,0.25))]";
-
 export type DropdownItem = {
   value: string;
   label: React.ReactNode;
@@ -78,7 +75,7 @@ export function Dropdown({
               <span
                 className={cn(
                   "flex flex-1 items-center gap-2.5",
-                  selected && SELECTED_GLOW,
+                  selected && "gold-glow",
                 )}
               >
                 {item.icon}
