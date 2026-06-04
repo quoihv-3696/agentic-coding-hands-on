@@ -6,6 +6,7 @@ export { default as BellIcon } from "@/assets/icons/bell.svg?react";
 export { default as UserIcon } from "@/assets/icons/user_profile.svg?react";
 export { default as ChevronDownIcon } from "@/assets/icons/down.svg?react";
 export { default as GoogleIcon } from "@/assets/icons/google.svg?react";
+export { default as DashboardIcon } from "@/assets/icons/dashboard_circle.svg?react";
 
 // No diagonal up-right arrow in the asset set yet — kept inline until one is added.
 export function ArrowUpRightIcon(props: SVGProps<SVGSVGElement>) {

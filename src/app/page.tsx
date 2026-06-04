@@ -8,5 +8,7 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <Homepage authed={!!user} />;
+  const isAdmin = user?.app_metadata?.role === "admin";
+
+  return <Homepage authed={!!user} isAdmin={isAdmin} />;
 }

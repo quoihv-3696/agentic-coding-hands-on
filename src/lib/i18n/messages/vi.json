@@ -14,9 +14,6 @@
     }
   },
   "home": {
-    "title": "Trang chủ SAA 2025",
-    "greeting": "Chào mừng bạn đến với SAA 2025",
-    "loggedInAs": "Bạn đang đăng nhập với",
     "logout": "Đăng xuất",
     "header": {
       "aboutSaa": "About SAA 2025",

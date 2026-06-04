@@ -23,9 +23,11 @@ const NAV: { key: NavKey; labelKey: string; href: string }[] = [
  */
 export function SiteHeader({
   authed = false,
+  isAdmin = false,
   activeNav = "about",
 }: {
   authed?: boolean;
+  isAdmin?: boolean;
   activeNav?: NavKey;
 }) {
   const { t } = useTranslations();
@@ -71,7 +73,7 @@ export function SiteHeader({
           </button>
         )}
         <LanguageMenu />
-        {authed && <AccountMenu />}
+        {authed && <AccountMenu isAdmin={isAdmin} />}
       </div>
     </header>
   );

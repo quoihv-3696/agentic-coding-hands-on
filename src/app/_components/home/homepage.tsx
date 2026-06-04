@@ -15,7 +15,13 @@ import heroBg from "@/assets/images/home/hero-bg.png";
  *   3. a "Cover" gradient layer (its own 1512×1480 box) above the artwork.
  * Content (header + sections) sits above all three.
  */
-export function Homepage({ authed }: { authed: boolean }) {
+export function Homepage({
+  authed,
+  isAdmin,
+}: {
+  authed: boolean;
+  isAdmin: boolean;
+}) {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#00101A]">
       {/* Layer 2: Key Visual at the top, aspect preserved. */}
@@ -40,7 +46,7 @@ export function Homepage({ authed }: { authed: boolean }) {
 
       {/* Content */}
       <div className="relative z-10">
-        <SiteHeader authed={authed} activeNav="about" />
+        <SiteHeader authed={authed} isAdmin={isAdmin} activeNav="about" />
         <main>
           <HeroSection />
           <RootFurtherSection />
