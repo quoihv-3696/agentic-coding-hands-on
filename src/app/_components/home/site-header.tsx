@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
-import { BellIcon, UserIcon, ChevronDownIcon } from "@/components/icons";
+import { BellIcon } from "@/components/icons";
+import { LanguageMenu } from "./language-menu";
+import { AccountMenu } from "./account-menu";
 
 type NavKey = "about" | "awards" | "kudos";
 
@@ -25,7 +27,7 @@ export function SiteHeader({
   authed?: boolean;
   activeNav?: NavKey;
 }) {
-  const { t, locale } = useTranslations();
+  const { t } = useTranslations();
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex h-20 items-center justify-between bg-[#101417]/80 px-6 backdrop-blur-md sm:px-10 lg:px-36">
@@ -67,22 +69,8 @@ export function SiteHeader({
             <span className="absolute right-2 top-2 size-2 rounded-full bg-red-500" />
           </button>
         )}
-        <button
-          type="button"
-          className="flex items-center gap-1 rounded-full px-2 py-1 font-medium text-white/90 transition-colors hover:bg-white/10"
-        >
-          {t(locale === "en" ? "language.en" : "language.vn")}
-          <ChevronDownIcon className="size-4" />
-        </button>
-        {authed && (
-          <button
-            type="button"
-            aria-label={t("home.header.account")}
-            className="grid size-10 place-items-center rounded-full text-white/90 transition-colors hover:bg-white/10"
-          >
-            <UserIcon className="size-5" />
-          </button>
-        )}
+        <LanguageMenu />
+        {authed && <AccountMenu />}
       </div>
     </header>
   );
