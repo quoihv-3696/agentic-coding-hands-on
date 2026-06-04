@@ -45,7 +45,11 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
   const handleSelect = async (value: string) => {
     if (value === "logout") {
       const supabase = createClient();
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        // ignore — the server clears the session cookie on the next request
+      }
       router.push("/login");
       router.refresh();
     }

@@ -19,7 +19,7 @@ import heroBg from "@/assets/images/home/hero-bg.png";
  */
 export function Homepage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#00101A]">
+    <div className="relative min-h-screen overflow-hidden bg-secondary">
       {/* Layer 2: Key Visual at the top, aspect preserved. */}
       <Image
         src={heroBg}

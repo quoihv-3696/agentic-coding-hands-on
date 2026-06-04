@@ -42,10 +42,7 @@ export function KudosSection() {
                 {t("home.kudos.label")}
               </p>
               {/* Gold title */}
-              <p
-                className="text-4xl font-bold leading-tight tracking-[-0.25px] text-[#FFEA9E] min-[1264px]:text-[57px] min-[1264px]:leading-16"
-                style={{ fontFamily: "Montserrat" }}
-              >
+              <p className="text-4xl font-bold leading-tight tracking-[-0.25px] text-[#FFEA9E] min-[1264px]:text-[57px] min-[1264px]:leading-16">
                 {t("home.kudos.title")}
               </p>
               {/* Body copy — preserve newlines from translation */}
@@ -54,13 +51,11 @@ export function KudosSection() {
               </p>
             </div>
 
-            {/* CTA button (matches hero CTA pattern: Link wrapping Button) */}
+            {/* CTA — Button asChild renders a single valid <a> (no <a><button>) */}
             <div>
-              <Link href="/kudos">
-                <Button variant="primary" rightIcon={<UpIcon />}>
-                  {t("home.kudos.detail")}
-                </Button>
-              </Link>
+              <Button asChild variant="primary" rightIcon={<UpIcon />}>
+                <Link href="/kudos">{t("home.kudos.detail")}</Link>
+              </Button>
             </div>
           </div>
 

@@ -19,6 +19,7 @@
       "awardsInfo": "Awards Information",
       "kudos": "Sun* Kudos",
       "notifications": "Thông báo",
+      "unread": "Có thông báo chưa đọc",
       "account": "Tài khoản",
       "profile": "Hồ sơ",
       "adminDashboard": "Trang quản trị"
@@ -44,7 +45,6 @@
     "awards": {
       "sectionLabel": "Sun* annual awards 2025",
       "sectionTitle": "Hệ thống giải thưởng",
-      "sectionDesc": "Các hạng mục sẽ được trao giải theo TOP những người xuất sắc nhất.",
       "detail": "Chi tiết",
       "cards": {
         "topTalent": { "title": "Top Talent", "desc": "Vinh danh top cá nhân xuất sắc trên mọi phương diện" },

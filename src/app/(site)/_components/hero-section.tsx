@@ -48,16 +48,12 @@ export function HeroSection() {
 
       {/* CTAs — solid (awards) + outline (kudos), both rounded-8 with the arrow icon */}
       <div className="flex flex-wrap gap-4">
-        <Link href="/awards">
-          <Button variant="primary" rightIcon={<UpIcon />}>
-            {t("home.hero.ctaAwards")}
-          </Button>
-        </Link>
-        <Link href="/kudos">
-          <Button variant="secondary" rightIcon={<UpIcon />}>
-            {t("home.hero.ctaKudos")}
-          </Button>
-        </Link>
+        <Button asChild variant="primary" rightIcon={<UpIcon />}>
+          <Link href="/awards">{t("home.hero.ctaAwards")}</Link>
+        </Button>
+        <Button asChild variant="secondary" rightIcon={<UpIcon />}>
+          <Link href="/kudos">{t("home.hero.ctaKudos")}</Link>
+        </Button>
       </div>
     </section>
   );

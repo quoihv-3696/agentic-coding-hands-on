@@ -47,38 +47,47 @@ export function AwardsSection() {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-3 lg:gap-6">
-          {AWARD_CATEGORIES.map((c) => (
-            <Link
-              key={c.slug}
-              href={awardHref(c.slug)}
-              className="group flex flex-col gap-4 rounded-2xl p-4 transition duration-300 hover:-translate-y-1"
-            >
-              <div className="relative aspect-square">
-                <Image
-                  src={AWARD_IMAGES[c.slug]}
-                  alt=""
-                  aria-hidden
-                  fill
-                  className="object-contain transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 45vw, 30vw"
-                />
-              </div>
+          {AWARD_CATEGORIES.map((c) => {
+            const image = AWARD_IMAGES[c.slug];
+            return (
+              <Link
+                key={c.slug}
+                href={awardHref(c.slug)}
+                className="group flex flex-col gap-4 rounded-2xl p-4 transition duration-300 hover:-translate-y-1"
+              >
+                <div className="relative aspect-square">
+                  {image && (
+                    <Image
+                      src={image}
+                      alt=""
+                      aria-hidden
+                      fill
+                      className="object-contain transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 1024px) 45vw, 30vw"
+                    />
+                  )}
+                </div>
 
-              <div className="px-2">
-                <h3 className="text-2xl text-primary">{t(c.titleKey)}</h3>
-                <p className="line-clamp-2 text-sm leading-relaxed text-white/60">
-                  {t(c.descKey)}
-                </p>
-                <Button
-                  variant="text"
-                  className="w-fit p-0"
-                  rightIcon={<UpIcon />}
-                >
-                  {t("home.awards.detail")}
-                </Button>
-              </div>
-            </Link>
-          ))}
+                <div className="px-2">
+                  <h3 className="text-2xl text-primary">{t(c.titleKey)}</h3>
+                  <p className="line-clamp-2 text-sm leading-relaxed text-white/60">
+                    {t(c.descKey)}
+                  </p>
+                  {/* The whole card is the link, so the Button renders asChild
+                      as a <span> — keeps the Button styling without nesting an
+                      interactive <button> inside the card's <a>. */}
+                  <Button
+                    asChild
+                    variant="text"
+                    className="mt-2 w-fit p-0"
+                    rightIcon={<UpIcon />}
+                  >
+                    <span>{t("home.awards.detail")}</span>
+                  </Button>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

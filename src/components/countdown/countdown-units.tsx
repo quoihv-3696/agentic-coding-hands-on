@@ -15,7 +15,11 @@ export function CountdownUnits({
 }) {
   const { t } = useTranslations();
   return (
-    <div className="flex items-start gap-[clamp(1.5rem,4vw,3.75rem)]">
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      className="flex items-start gap-[clamp(1.5rem,4vw,3.75rem)]"
+    >
       <CountdownUnit value={days} max={99} label={t("countdown.days")} />
       <CountdownUnit value={hours} max={23} label={t("countdown.hours")} />
       <CountdownUnit value={minutes} max={59} label={t("countdown.minutes")} />

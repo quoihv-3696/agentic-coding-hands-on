@@ -74,6 +74,7 @@ export function SiteHeader({
           >
             <BellIcon className="size-5" />
             <span className="absolute right-2 top-2 size-2 rounded-full bg-red-500" />
+            <span className="sr-only">{t("home.header.unread")}</span>
           </button>
         )}
         <LanguageSwitcher />
