@@ -8,7 +8,7 @@ import type { AwardDetail } from "@/lib/awards/award-details";
 
 export interface AwardCardProps {
   slug: string;
-  image: StaticImageData;
+  image?: StaticImageData;
   titleKey: string;
   detail: AwardDetail;
   imageSide: "left" | "right";
@@ -36,14 +36,16 @@ export function AwardCard({
         {/* Trophy image */}
         <div className="mx-auto w-full max-w-84 shrink-0 lg:mx-0 lg:w-84">
           <div className="relative aspect-square w-full overflow-hidden rounded-3xl -mt-1.5">
-            <Image
-              src={image}
-              alt=""
-              aria-hidden
-              fill
-              className="object-contain"
-              sizes="(max-width: 1024px) 80vw, 336px"
-            />
+            {image && (
+              <Image
+                src={image}
+                alt=""
+                aria-hidden
+                fill
+                className="object-contain"
+                sizes="(max-width: 1024px) 80vw, 336px"
+              />
+            )}
           </div>
         </div>
 
@@ -75,7 +77,7 @@ export function AwardCard({
           {/* Quantity row */}
           <div className="flex items-center gap-4 pr-4">
             <DiamondIcon className="size-6 shrink-0 " aria-hidden />
-            <span className="text-2xl font-bold text-primary min-w-67.5">
+            <span className="text-2xl font-bold text-primary lg:min-w-67.5">
               {t("awardsPage.quantityLabel")}
             </span>
             <span className="ml-auto flex items-center gap-2">
