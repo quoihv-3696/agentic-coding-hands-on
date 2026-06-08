@@ -59,6 +59,8 @@ const sideClasses = {
   bottom:
     "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
   left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+  // Default desktop cap is 440px; consumers needing a wider panel override
+  // `max-w` (e.g. `sm:w-138.5 sm:max-w-none`) on SheetContent's className.
   right:
     "inset-y-0 right-0 h-full w-full border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-[440px]",
 };

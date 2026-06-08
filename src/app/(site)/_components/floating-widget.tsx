@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CloseIcon, PenIcon } from "@/components/icons";
@@ -20,29 +21,47 @@ export function FloatingWidget() {
   const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const fabRef = useRef<HTMLButtonElement>(null);
+  // True while a menu item is opening the drawer — so the menu's close handler
+  // lets the drawer take focus instead of yanking it back to the FAB.
+  const openingDrawerRef = useRef(false);
   const { t } = useTranslations();
+
+  // Pill styling shared by the menu actions (rendered as DropdownMenuItem so
+  // Radix keyboard nav / roving focus / ARIA menuitem semantics all work).
+  const pillClass =
+    "flex h-14 items-center justify-start gap-3 rounded-full bg-primary px-6 text-base font-semibold text-primary-2 gold-shadow";
 
   return (
     <>
       <div className="fixed bottom-6 right-5 z-50">
         <DropdownMenu open={open} onOpenChange={setOpen}>
-          {/* Pill actions stacked above the trigger — rendered inside the dropdown */}
+          {/* Pill actions stacked above the trigger. Rendered as real
+              DropdownMenuItems (keyboard nav + ARIA menuitem semantics); the
+              menu chrome is stripped so each item reads as a standalone pill. */}
           <DropdownMenuContent
             side="top"
             align="end"
             sideOffset={12}
             className="flex w-auto min-w-0 flex-col gap-2 border-none bg-transparent p-0 shadow-none ring-0"
-            // Suppress default menu styles so pills render as standalone buttons
-            onCloseAutoFocus={(e) => e.preventDefault()}
-          >
-            {/* "Thể lệ" pill */}
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
+            onCloseAutoFocus={(e) => {
+              // Manage focus ourselves. Open the drawer only AFTER the menu has
+              // closed (here) so the Dialog's own autofocus wins instead of
+              // racing the menu's focus release (which would drop to <body>).
+              e.preventDefault();
+              if (openingDrawerRef.current) {
+                openingDrawerRef.current = false;
                 setDrawerOpen(true);
+                return;
+              }
+              fabRef.current?.focus();
+            }}
+          >
+            {/* "Thể lệ" */}
+            <DropdownMenuItem
+              onSelect={() => {
+                openingDrawerRef.current = true;
               }}
-              className="flex h-14 items-center gap-3 rounded-full bg-primary px-6 font-semibold text-primary-2 gold-shadow transition-opacity motion-reduce:transition-none hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary"
+              className={`${pillClass} cursor-pointer focus:bg-[#FFF8E1] focus:text-primary-2`}
             >
               <Image
                 src={theleLightning}
@@ -53,19 +72,18 @@ export function FloatingWidget() {
                 className="shrink-0"
               />
               {t("home.widget.rules")}
-            </button>
+            </DropdownMenuItem>
 
-            {/* "Viết KUDOS" pill — inert for now (kudos form is a future task).
-                aria-disabled advertises the no-op state to assistive tech while
-                keeping the gold design look. */}
-            <button
-              type="button"
-              aria-disabled
-              className="flex h-14 items-center gap-3 rounded-full bg-primary px-6 font-semibold text-primary-2 gold-shadow transition-opacity motion-reduce:transition-none hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary"
+            {/* "Viết KUDOS" — inert for now (kudos form is a future task).
+                `disabled` keeps it out of activation/keyboard-nav and marks it
+                for assistive tech; opacity override preserves the gold look. */}
+            <DropdownMenuItem
+              disabled
+              className={`${pillClass} data-disabled:pointer-events-none data-disabled:opacity-100`}
             >
               <PenIcon className="size-6 shrink-0 text-primary-2" />
               {t("home.widget.writeKudos")}
-            </button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
 
           {/* FAB trigger — collapsed: gold pill (pen / lightning);

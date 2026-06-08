@@ -66,11 +66,13 @@ export function KudosRulesDrawer({
           >
             {t("kudosRules.buttons.close")}
           </Button>
-          {/* Inert for now (kudos form is a future task); aria-disabled
-              advertises the no-op state while keeping the primary look. */}
+          {/* Inert for now (kudos form is a future task); aria-disabled marks
+              the no-op state for assistive tech and onClick swallows activation,
+              while the primary look is kept per design. */}
           <Button
             variant="primary"
             aria-disabled
+            onClick={(e) => e.preventDefault()}
             leftIcon={<PenIcon className="size-6" />}
             className="flex-1"
           >
