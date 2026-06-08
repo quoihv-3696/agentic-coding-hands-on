@@ -70,7 +70,52 @@
     },
     "widget": {
       "label": "Quick actions",
-      "comingSoon": "Features coming soon."
+      "comingSoon": "Features coming soon.",
+      "rules": "Rules",
+      "writeKudos": "Write KUDOS",
+      "expandLabel": "Expand quick actions",
+      "collapseLabel": "Collapse quick actions"
+    }
+  },
+  "kudosRules": {
+    "title": "Rules",
+    "description": "Sun* Kudos program rules",
+    "section1Heading": "KUDOS RECIPIENTS: HERO BADGES FOR POSITIVE IMPACT",
+    "section1Intro": "Based on the number of teammates who send you Kudos, you will earn the corresponding Hero badge, displayed directly next to your profile name",
+    "tiers": {
+      "newHero": {
+        "count": "1–4 people have sent you Kudos",
+        "desc": "The journey of spreading good things begins – the first words of thanks and recognition have found you."
+      },
+      "risingHero": {
+        "count": "5–9 people have sent you Kudos",
+        "desc": "Your presence is growing in your teammates' hearts through your kindness and dedication."
+      },
+      "superHero": {
+        "count": "10–20 people have sent you Kudos",
+        "desc": "You have become a trusted and beloved icon, always ready to support and remembered by many teammates."
+      },
+      "legendHero": {
+        "count": "More than 20 people have sent you Kudos",
+        "desc": "You have become a legend – someone who leaves an unforgettable mark on the team through their heart and actions."
+      }
+    },
+    "section2Heading": "KUDOS SENDERS: COLLECT ALL 6 ICONS, WIN A MYSTERY GIFT",
+    "section2Intro": "Every Kudos you send will be posted on the system and receive ❤️ reactions from the Sunner community. For every 5 ❤️ reactions, you can open 1 Secret Box, with a chance to receive one of 6 exclusive SAA icons.",
+    "icons": {
+      "revival": "REVIVAL",
+      "touchOfLight": "TOUCH OF LIGHT",
+      "stayGold": "STAY GOLD",
+      "flowToHorizon": "FLOW TO HORIZON",
+      "beyondTheBoundary": "BEYOND THE BOUNDARY",
+      "rootFurther": "ROOT FURTHER"
+    },
+    "section2Closing": "Sunners who collect all 6 icons will receive a mystery gift from SAA 2025.",
+    "section3Heading": "KUDOS QUỐC DÂN",
+    "section3Body": "The 5 Kudos that receive the most ❤️ reactions across all of Sun* will officially become Kudos Quốc Dân and be awarded a special gift from SAA 2025: Root Further.",
+    "buttons": {
+      "close": "Close",
+      "writeKudos": "Write KUDOS"
     }
   },
   "countdown": {
