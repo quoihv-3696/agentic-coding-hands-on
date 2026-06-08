@@ -1,6 +1,6 @@
-import { ComingSoon } from "@/components/coming-soon";
+import { AwardsPage } from "./_components/awards-page";
 
-/** Stub Awards Information page — homepage links target this until it is built. */
-export default function AwardsPage() {
-  return <ComingSoon titleKey="awardsPage.title" />;
+/** Awards Information page — full design implementation. */
+export default function AwardsPageRoute() {
+  return <AwardsPage />;
 }
