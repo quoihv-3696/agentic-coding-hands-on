@@ -65,3 +65,5 @@ DerivedData/
 ios/Pods/
 android/.gradle/
 android/build/
+# Playwright MCP transient artifacts
+.playwright-mcp/
