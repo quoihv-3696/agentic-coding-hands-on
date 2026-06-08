@@ -7,3 +7,6 @@ export { default as GoogleIcon } from "@/assets/icons/google.svg?react";
 export { default as DashboardIcon } from "@/assets/icons/dashboard_circle.svg?react";
 export { default as UpIcon } from "@/assets/icons/up.svg?react";
 export { default as PenIcon } from "@/assets/icons/pen.svg?react";
+export { default as TargetIcon } from "@/assets/icons/target.svg?react";
+export { default as DiamondIcon } from "@/assets/icons/diamond.svg?react";
+export { default as LicenseIcon } from "@/assets/icons/license.svg?react";
