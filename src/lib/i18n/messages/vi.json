@@ -47,12 +47,30 @@
       "sectionTitle": "Hệ thống giải thưởng",
       "detail": "Chi tiết",
       "cards": {
-        "topTalent": { "title": "Top Talent", "desc": "Vinh danh top cá nhân xuất sắc trên mọi phương diện" },
-        "topProject": { "title": "Top Project", "desc": "Vinh danh top dự án xuất sắc trên mọi phương diện, dự án có doanh thu nổi bật" },
-        "topProjectLeader": { "title": "Top Project Leader", "desc": "Vinh danh top người quản lý truyền cảm hứng và dẫn dắt dự án bứt phá" },
-        "bestManager": { "title": "Best Manager", "desc": "Vinh danh người quản lý có năng lực quản lý tốt, dẫn dắt đội nhóm" },
-        "signature2025Creator": { "title": "Signature 2025 - Creator", "desc": "Vinh danh người quản lý có năng lực quản lý tốt, dẫn dắt đội nhóm" },
-        "mvp": { "title": "MVP (Most Valuable Person)", "desc": "Vinh danh người quản lý có năng lực quản lý tốt, dẫn dắt đội nhóm" }
+        "topTalent": {
+          "title": "Top Talent",
+          "desc": "Vinh danh top cá nhân xuất sắc trên mọi phương diện"
+        },
+        "topProject": {
+          "title": "Top Project",
+          "desc": "Vinh danh top dự án xuất sắc trên mọi phương diện, dự án có doanh thu nổi bật"
+        },
+        "topProjectLeader": {
+          "title": "Top Project Leader",
+          "desc": "Vinh danh top người quản lý truyền cảm hứng và dẫn dắt dự án bứt phá"
+        },
+        "bestManager": {
+          "title": "Best Manager",
+          "desc": "Vinh danh người quản lý có năng lực quản lý tốt, dẫn dắt đội nhóm"
+        },
+        "signature2025Creator": {
+          "title": "Signature 2025 - Creator",
+          "desc": "Vinh danh người quản lý có năng lực quản lý tốt, dẫn dắt đội nhóm"
+        },
+        "mvp": {
+          "title": "MVP (Most Valuable Person)",
+          "desc": "Vinh danh người quản lý có năng lực quản lý tốt, dẫn dắt đội nhóm"
+        }
       }
     },
     "kudos": {
@@ -161,7 +179,7 @@
   },
   "kudosPage": { "title": "Sun* Kudos" },
   "kudosForm": {
-    "heading": "Gửi lời chúc",
+    "heading": "Gửi lời cám ơn và ghi nhận đến đồng đội",
     "recipientLabel": "Người nhận",
     "recipientPlaceholder": "Chọn người nhận",
     "recipientSearchPlaceholder": "Tìm theo tên hoặc email",
@@ -198,7 +216,7 @@
       "imagesTooMany": "Tối đa 5 ảnh",
       "nicknameRequired": "Vui lòng nhập biệt danh khi gửi ẩn danh"
     },
-    "errorGeneric": "Không thể gửi lời chúc. Vui lòng thử lại."
+    "errorGeneric": "Không thể Gửi lời cám ơn và ghi nhận đến đồng đội. Vui lòng thử lại."
   },
   "kudosFeed": {
     "from": "Từ",
