@@ -47,12 +47,30 @@
       "sectionTitle": "Awards system",
       "detail": "Details",
       "cards": {
-        "topTalent": { "title": "Top Talent", "desc": "Honoring the top individuals excelling in every aspect" },
-        "topProject": { "title": "Top Project", "desc": "Honoring the top projects excelling in every aspect, with standout revenue" },
-        "topProjectLeader": { "title": "Top Project Leader", "desc": "Honoring the top leaders who inspire and drive projects to break through" },
-        "bestManager": { "title": "Best Manager", "desc": "Honoring managers with strong management skills who lead their teams" },
-        "signature2025Creator": { "title": "Signature 2025 - Creator", "desc": "Honoring managers with strong management skills who lead their teams" },
-        "mvp": { "title": "MVP (Most Valuable Person)", "desc": "Honoring managers with strong management skills who lead their teams" }
+        "topTalent": {
+          "title": "Top Talent",
+          "desc": "Honoring the top individuals excelling in every aspect"
+        },
+        "topProject": {
+          "title": "Top Project",
+          "desc": "Honoring the top projects excelling in every aspect, with standout revenue"
+        },
+        "topProjectLeader": {
+          "title": "Top Project Leader",
+          "desc": "Honoring the top leaders who inspire and drive projects to break through"
+        },
+        "bestManager": {
+          "title": "Best Manager",
+          "desc": "Honoring managers with strong management skills who lead their teams"
+        },
+        "signature2025Creator": {
+          "title": "Signature 2025 - Creator",
+          "desc": "Honoring managers with strong management skills who lead their teams"
+        },
+        "mvp": {
+          "title": "MVP (Most Valuable Person)",
+          "desc": "Honoring managers with strong management skills who lead their teams"
+        }
       }
     },
     "kudos": {
@@ -161,7 +179,7 @@
   },
   "kudosPage": { "title": "Sun* Kudos" },
   "kudosForm": {
-    "heading": "Send a Kudo",
+    "heading": "Sending thanks and recognition to teammates.",
     "recipientLabel": "Recipient",
     "recipientPlaceholder": "Select a recipient",
     "recipientSearchPlaceholder": "Search by name or email",

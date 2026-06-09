@@ -2,26 +2,29 @@
 
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 import { createClient } from "@/lib/supabase/server";
 import { searchProfiles } from "./queries";
 import { createKudoSchema } from "./schema";
 import type { Profile } from "./types";
 
-/** Allowed HTML tags and attributes for TipTap body content. */
-const ALLOWED_TAGS = ["p", "br", "strong", "em", "u", "s", "ul", "ol", "li", "a", "span", "mark", "blockquote", "code", "pre"];
-// `data-id` / `data-label` / `data-type` are emitted by the TipTap Mention
-// extension's span — keep them so @mentions survive sanitization and render as
-// styled profile links on the feed.
-const ALLOWED_ATTR = ["href", "target", "rel", "class", "data-id", "data-label", "data-type", "data-mention-id"];
-
-// Force rel="noopener noreferrer" on any link that opens a new tab so sanitized
-// body HTML can't be used for reverse-tabnabbing. Registered once per module.
-DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-  if (node.tagName === "A" && node.getAttribute("target") === "_blank") {
-    node.setAttribute("rel", "noopener noreferrer");
-  }
-});
+// Server-side sanitization for TipTap body HTML. Uses sanitize-html (pure JS) —
+// NOT a DOM-based sanitizer (jsdom fails to bundle on Vercel serverless).
+// `data-id`/`data-label`/`data-type` on <span> are emitted by the TipTap Mention
+// extension; `class` carries the mention/link styling. All links are forced to
+// rel="noopener noreferrer" to prevent reverse-tabnabbing.
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: ["p", "br", "strong", "em", "u", "s", "ul", "ol", "li", "a", "span", "mark", "blockquote", "code", "pre"],
+  allowedAttributes: {
+    a: ["href", "target", "rel"],
+    span: ["data-id", "data-label", "data-type", "data-mention-id", "class"],
+    "*": ["class"],
+  },
+  allowedSchemes: ["http", "https", "mailto"],
+  transformTags: {
+    a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }),
+  },
+};
 
 type CreateKudoResult =
   | { error: string }
@@ -72,12 +75,8 @@ export async function createKudo(
     return { error: "Sender profile not found. Please log out and log in again." };
   }
 
-  // 4. Sanitize body HTML server-side
-  // isomorphic-dompurify works in both Node and browser contexts.
-  const sanitizedBodyHtml = DOMPurify.sanitize(data.bodyHtml, {
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
-  });
+  // 4. Sanitize body HTML server-side (sanitize-html — serverless-safe, no jsdom)
+  const sanitizedBodyHtml = sanitizeHtml(data.bodyHtml, SANITIZE_OPTIONS);
 
   // 5. Insert
   const { data: inserted, error: insertError } = await supabase
