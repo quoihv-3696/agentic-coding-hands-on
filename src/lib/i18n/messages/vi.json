@@ -159,5 +159,60 @@
       "mvp": "Giải thưởng MVP vinh danh cá nhân xuất sắc nhất năm – gương mặt tiêu biểu đại diện cho toàn bộ tập thể Sun*. Họ là người đã thể hiện năng lực vượt trội, tinh thần cống hiến bền bỉ, và tầm ảnh hưởng sâu rộng, để lại dấu ấn mạnh mẽ trong hành trình của Sun* suốt năm qua. Không chỉ nổi bật bởi hiệu suất và kết quả công việc, họ còn là nguồn cảm hứng lan tỏa – thông qua suy nghĩ, hành động và ảnh hưởng tích cực của mình đối với tập thể. MVP là người hội tụ đầy đủ phẩm chất của người Sun* ưu tú, đồng thời mang trên mình trọng trách lớn lao: trở thành hình mẫu đại diện cho con người và tinh thần Sun*, góp phần dẫn dắt tập thể vươn tới những đỉnh cao mới."
     }
   },
-  "kudosPage": { "title": "Sun* Kudos" }
+  "kudosPage": { "title": "Sun* Kudos" },
+  "kudosForm": {
+    "heading": "Gửi lời chúc",
+    "recipientLabel": "Người nhận",
+    "recipientPlaceholder": "Chọn người nhận",
+    "recipientSearchPlaceholder": "Tìm theo tên hoặc email",
+    "recipientEmpty": "Không tìm thấy đồng đội nào",
+    "titleLabel": "Tiêu đề",
+    "titlePlaceholder": "Nhập tiêu đề lời chúc",
+    "bodyLabel": "Nội dung",
+    "bodyPlaceholder": "Viết lời chúc của bạn…",
+    "hashtagsLabel": "Hashtag",
+    "hashtagsPlaceholder": "Chọn 1–5 hashtag",
+    "hashtagsMax": "Tối đa 5",
+    "hashtagRemove": "Bỏ chọn hashtag",
+    "imagesLabel": "Hình ảnh",
+    "imagesHint": "Tối đa 5 ảnh",
+    "imageRemove": "Xoá ảnh",
+    "anonymousLabel": "Gửi ẩn danh",
+    "nicknameLabel": "Biệt danh",
+    "nicknamePlaceholder": "Nhập biệt danh hiển thị",
+    "mentionEmpty": "Không có kết quả",
+    "linkHeading": "Thêm liên kết",
+    "linkPlaceholder": "Dán đường dẫn",
+    "linkApply": "Áp dụng",
+    "linkRemove": "Gỡ liên kết",
+    "charCount": "{count}/1000",
+    "send": "Gửi",
+    "sending": "Đang gửi…",
+    "cancel": "Huỷ",
+    "validation": {
+      "recipientRequired": "Vui lòng chọn người nhận",
+      "titleRequired": "Vui lòng nhập tiêu đề",
+      "bodyRequired": "Vui lòng nhập nội dung",
+      "bodyTooLong": "Nội dung tối đa 1000 ký tự",
+      "hashtagsRequired": "Chọn từ 1 đến 5 hashtag",
+      "imagesTooMany": "Tối đa 5 ảnh",
+      "nicknameRequired": "Vui lòng nhập biệt danh khi gửi ẩn danh"
+    },
+    "errorGeneric": "Không thể gửi lời chúc. Vui lòng thử lại."
+  },
+  "kudosFeed": {
+    "from": "Từ",
+    "to": "đến",
+    "anonymous": "Ẩn danh",
+    "copyLink": "Sao chép liên kết",
+    "copied": "Đã sao chép",
+    "heart": "Thả tim",
+    "empty": "Chưa có lời chúc nào. Hãy là người đầu tiên gửi KUDOS!",
+    "tiers": {
+      "new": "New Hero",
+      "rising": "Rising Hero",
+      "super": "Super Hero",
+      "legend": "Legend Hero"
+    }
+  }
 }

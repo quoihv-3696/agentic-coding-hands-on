@@ -14,16 +14,20 @@ import { useTranslations } from "@/lib/i18n/i18n-context";
 import theleLightning from "@/assets/icons/thele-lightning.svg";
 
 import { KudosRulesDrawer } from "./kudos-rules-drawer";
+import { KudosFormDialog } from "./kudos-form/kudos-form-dialog";
 
 // thele-lightning.svg is multicolor (gradients) — rendered via next/image
 
 export function FloatingWidget() {
   const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
   const fabRef = useRef<HTMLButtonElement>(null);
   // True while a menu item is opening the drawer — so the menu's close handler
   // lets the drawer take focus instead of yanking it back to the FAB.
   const openingDrawerRef = useRef(false);
+  // True while a menu item is opening the form dialog — same pattern.
+  const openingFormRef = useRef(false);
   const { t } = useTranslations();
 
   // Pill styling shared by the menu actions (rendered as DropdownMenuItem so
@@ -44,13 +48,19 @@ export function FloatingWidget() {
             sideOffset={12}
             className="flex w-auto min-w-0 flex-col gap-2 border-none bg-transparent p-0 shadow-none ring-0"
             onCloseAutoFocus={(e) => {
-              // Manage focus ourselves. Open the drawer only AFTER the menu has
-              // closed (here) so the Dialog's own autofocus wins instead of
-              // racing the menu's focus release (which would drop to <body>).
+              // Manage focus ourselves. Open the drawer/dialog only AFTER the
+              // menu has closed (here) so the overlay's own autofocus wins
+              // instead of racing the menu's focus release (which would drop
+              // to <body>).
               e.preventDefault();
               if (openingDrawerRef.current) {
                 openingDrawerRef.current = false;
                 setDrawerOpen(true);
+                return;
+              }
+              if (openingFormRef.current) {
+                openingFormRef.current = false;
+                setFormOpen(true);
                 return;
               }
               fabRef.current?.focus();
@@ -74,12 +84,12 @@ export function FloatingWidget() {
               {t("home.widget.rules")}
             </DropdownMenuItem>
 
-            {/* "Viết KUDOS" — inert for now (kudos form is a future task).
-                `disabled` keeps it out of activation/keyboard-nav and marks it
-                for assistive tech; opacity override preserves the gold look. */}
+            {/* "Viết KUDOS" — opens the write/send form dialog */}
             <DropdownMenuItem
-              disabled
-              className={`${pillClass} data-disabled:pointer-events-none data-disabled:opacity-100`}
+              onSelect={() => {
+                openingFormRef.current = true;
+              }}
+              className={`${pillClass} cursor-pointer focus:bg-[#FFF8E1] focus:text-primary-2`}
             >
               <PenIcon className="size-6 shrink-0 text-primary-2" />
               {t("home.widget.writeKudos")}
@@ -134,6 +144,19 @@ export function FloatingWidget() {
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
         returnFocusRef={fabRef}
+        onWriteKudos={() => {
+          // Close the rules drawer, then open the write/send form.
+          setDrawerOpen(false);
+          setFormOpen(true);
+        }}
+      />
+
+      <KudosFormDialog
+        open={formOpen}
+        onOpenChange={(o) => {
+          setFormOpen(o);
+          if (!o) fabRef.current?.focus();
+        }}
       />
     </>
   );

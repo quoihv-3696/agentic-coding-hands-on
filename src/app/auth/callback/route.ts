@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { linkProfileOnLogin } from "@/lib/kudos/profile-link";
 
 /** JSON-encode a value for safe inlining inside a <script> tag (no </script> breakout). */
 function scriptJson(value: string): string {
@@ -22,7 +23,12 @@ export async function GET(request: NextRequest) {
     try {
       const supabase = await createClient();
       const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (!error) status = "success";
+      if (!error) {
+        status = "success";
+        // Link the freshly-authed user to their seeded profile (by email) so
+        // Kudos RLS sender checks resolve. Idempotent + best-effort.
+        await linkProfileOnLogin();
+      }
     } catch {
       // Network error / Supabase down — status stays "error" so the popup
       // still posts a message back to the opener instead of hanging open.

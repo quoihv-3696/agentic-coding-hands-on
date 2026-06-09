@@ -21,12 +21,15 @@ interface KudosRulesDrawerProps {
   onOpenChange: (open: boolean) => void;
   /** Focus returns here when the drawer closes (the FAB trigger). */
   returnFocusRef?: RefObject<HTMLButtonElement | null>;
+  /** Opens the write/send Kudos form (closes the drawer first). */
+  onWriteKudos?: () => void;
 }
 
 export function KudosRulesDrawer({
   open,
   onOpenChange,
   returnFocusRef,
+  onWriteKudos,
 }: KudosRulesDrawerProps) {
   const { t } = useTranslations();
 
@@ -66,13 +69,10 @@ export function KudosRulesDrawer({
           >
             {t("kudosRules.buttons.close")}
           </Button>
-          {/* Inert for now (kudos form is a future task); aria-disabled marks
-              the no-op state for assistive tech and onClick swallows activation,
-              while the primary look is kept per design. */}
+          {/* Opens the write/send Kudos form (drawer closes first). */}
           <Button
             variant="primary"
-            aria-disabled
-            onClick={(e) => e.preventDefault()}
+            onClick={() => onWriteKudos?.()}
             leftIcon={<PenIcon className="size-6" />}
             className="flex-1"
           >
