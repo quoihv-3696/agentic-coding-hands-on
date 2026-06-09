@@ -87,6 +87,10 @@ export function ImageUploader({ images, onChange, max = 5 }: ImageUploaderProps)
             multiple
             className="sr-only"
             onChange={(e) => handleFiles(e.target.files)}
+            // Reset so selecting the same file again after removing it re-fires onChange.
+            onClick={(e) => {
+              (e.currentTarget as HTMLInputElement).value = "";
+            }}
             aria-hidden
           />
         </div>

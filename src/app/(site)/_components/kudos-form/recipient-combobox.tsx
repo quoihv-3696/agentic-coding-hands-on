@@ -36,10 +36,18 @@ export function RecipientCombobox({ value, onChange }: RecipientComboboxProps) {
   // Debounced server-side search (ilike on name/email).
   useEffect(() => {
     if (!open) return;
+    let stale = false;
     const handle = setTimeout(() => {
-      searchProfilesAction(query).then(setResults);
+      // Guard against out-of-order responses: a slow query resolving after a
+      // newer one must not overwrite the fresher results.
+      searchProfilesAction(query).then((r) => {
+        if (!stale) setResults(r);
+      });
     }, 250);
-    return () => clearTimeout(handle);
+    return () => {
+      stale = true;
+      clearTimeout(handle);
+    };
   }, [query, open]);
 
   return (

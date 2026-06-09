@@ -151,7 +151,17 @@ export function BodyEditor({ onChange, onMentionsChange }: BodyEditorProps) {
     ({ text, url }: { text: string; url: string }) => {
       if (!editor) return;
       if (text) {
-        editor.chain().focus().insertContent(`<a href="${url}">${text}</a>`).run();
+        // Insert as a structured text node with a link mark — never build raw
+        // HTML from user input (a `"` in url/text would break out of the tag).
+        editor
+          .chain()
+          .focus()
+          .insertContent({
+            type: "text",
+            text,
+            marks: [{ type: "link", attrs: { href: url } }],
+          })
+          .run();
       } else {
         editor.chain().focus().setLink({ href: url }).run();
       }

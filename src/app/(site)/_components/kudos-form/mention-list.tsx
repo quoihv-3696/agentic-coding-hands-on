@@ -38,24 +38,32 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
       if (item) command({ id: item.id, label: item.displayName });
     }
 
-    useImperativeHandle(ref, () => ({
-      onKeyDown: ({ event }) => {
-        if (items.length === 0) return false;
-        if (event.key === "ArrowUp") {
-          setSelectedIndex((i) => (i + items.length - 1) % items.length);
-          return true;
-        }
-        if (event.key === "ArrowDown") {
-          setSelectedIndex((i) => (i + 1) % items.length);
-          return true;
-        }
-        if (event.key === "Enter") {
-          selectItem(selectedIndex);
-          return true;
-        }
-        return false;
-      },
-    }));
+    // Explicit deps: under React Compiler (reactCompiler: true) the handle factory
+    // can be memoized, which would freeze `selectedIndex`/`items` in the closure
+    // and make Enter pick the wrong item. The dep array forces a fresh handle.
+    useImperativeHandle(
+      ref,
+      () => ({
+        onKeyDown: ({ event }) => {
+          if (items.length === 0) return false;
+          if (event.key === "ArrowUp") {
+            setSelectedIndex((i) => (i + items.length - 1) % items.length);
+            return true;
+          }
+          if (event.key === "ArrowDown") {
+            setSelectedIndex((i) => (i + 1) % items.length);
+            return true;
+          }
+          if (event.key === "Enter") {
+            const item = items[selectedIndex];
+            if (item) command({ id: item.id, label: item.displayName });
+            return true;
+          }
+          return false;
+        },
+      }),
+      [items, selectedIndex, command],
+    );
 
     return (
       <ul className="pointer-events-auto w-56 rounded-lg border border-[#998C5F] bg-[#00070C] py-1.5 shadow-lg">

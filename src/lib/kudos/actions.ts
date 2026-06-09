@@ -98,7 +98,8 @@ export async function createKudo(
 
   if (insertError) {
     console.error("[kudos/actions] createKudo insert error:", insertError.message);
-    return { error: insertError.message };
+    // Generic message — never surface raw DB/constraint/RLS text to the client.
+    return { error: "Could not save the Kudo. Please try again." };
   }
 
   revalidatePath("/kudos");
@@ -127,7 +128,7 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
 
   if (checkError) {
     console.error("[kudos/actions] toggleReaction check error:", checkError.message);
-    return { error: checkError.message };
+    return { error: "Could not update reaction." };
   }
 
   if (existing) {
@@ -137,7 +138,7 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
       .eq("id", existing.id);
     if (deleteError) {
       console.error("[kudos/actions] toggleReaction delete error:", deleteError.message);
-      return { error: deleteError.message };
+      return { error: "Could not update reaction." };
     }
     revalidatePath("/kudos");
     return { success: true, reacted: false };
@@ -147,7 +148,7 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
       .insert({ kudo_id: kudoId, reactor_auth_id: user.id, reaction_type: "heart" });
     if (insertError) {
       console.error("[kudos/actions] toggleReaction insert error:", insertError.message);
-      return { error: insertError.message };
+      return { error: "Could not update reaction." };
     }
     revalidatePath("/kudos");
     return { success: true, reacted: true };
