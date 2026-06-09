@@ -159,5 +159,60 @@
       "mvp": "The MVP award honors the single most outstanding individual of the year — the face that represents the entire Sun* community. They have shown superior capability, enduring dedication, and far-reaching influence, leaving a strong mark on Sun*'s journey throughout the year. Beyond performance and work results, they are a source of inspiration that spreads — through their thinking, actions, and positive influence on the team. The MVP embodies the full qualities of an outstanding Sun* person while carrying a great responsibility: to become the model representing Sun*'s people and spirit, helping lead the team toward new heights."
     }
   },
-  "kudosPage": { "title": "Sun* Kudos" }
+  "kudosPage": { "title": "Sun* Kudos" },
+  "kudosForm": {
+    "heading": "Send a Kudo",
+    "recipientLabel": "Recipient",
+    "recipientPlaceholder": "Select a recipient",
+    "recipientSearchPlaceholder": "Search by name or email",
+    "recipientEmpty": "No teammate found",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter a title",
+    "bodyLabel": "Message",
+    "bodyPlaceholder": "Write your message…",
+    "hashtagsLabel": "Hashtags",
+    "hashtagsPlaceholder": "Pick 1–5 hashtags",
+    "hashtagsMax": "Up to 5",
+    "hashtagRemove": "Remove hashtag",
+    "imagesLabel": "Images",
+    "imagesHint": "Up to 5 images",
+    "imageRemove": "Remove image",
+    "anonymousLabel": "Send anonymously",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Enter a display nickname",
+    "mentionEmpty": "No results",
+    "linkHeading": "Add link",
+    "linkPlaceholder": "Paste a URL",
+    "linkApply": "Apply",
+    "linkRemove": "Remove link",
+    "charCount": "{count}/1000",
+    "send": "Send",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "validation": {
+      "recipientRequired": "Please select a recipient",
+      "titleRequired": "Please enter a title",
+      "bodyRequired": "Please enter a message",
+      "bodyTooLong": "Message must be 1000 characters or fewer",
+      "hashtagsRequired": "Pick between 1 and 5 hashtags",
+      "imagesTooMany": "Up to 5 images",
+      "nicknameRequired": "A nickname is required when sending anonymously"
+    },
+    "errorGeneric": "Could not send the Kudo. Please try again."
+  },
+  "kudosFeed": {
+    "from": "From",
+    "to": "to",
+    "anonymous": "Anonymous",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "heart": "React",
+    "empty": "No Kudos yet. Be the first to send one!",
+    "tiers": {
+      "new": "New Hero",
+      "rising": "Rising Hero",
+      "super": "Super Hero",
+      "legend": "Legend Hero"
+    }
+  }
 }

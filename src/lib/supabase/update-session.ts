@@ -3,9 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * Paths reachable without an authenticated session.
- * NOTE: `/awards` and `/kudos` are public ONLY because they are "coming soon"
- * stubs today. Before shipping real (potentially user-scoped) content there,
- * REMOVE them from this list or they will be served to anonymous users.
+ * NOTE: `/awards` is public because it is a "coming soon" stub today.
+ * `/kudos` has been removed — the feed is auth-gated (ships real user content).
  * `"/"` is matched exactly (the `startsWith("/" + "/")` branch is dead) — do not
  * treat it as a prefix that opens every route.
  */
@@ -15,7 +14,6 @@ const PUBLIC_PATHS = [
   "/auth/callback",
   "/countdown",
   "/awards",
-  "/kudos",
 ];
 
 function isPublic(pathname: string): boolean {
