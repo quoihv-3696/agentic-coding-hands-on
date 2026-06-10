@@ -57,6 +57,31 @@ values
 on conflict (email) do nothing;
 
 -- ============================================================
+-- Backfill canonical `department` (Live Board "Phòng ban" filter) from the
+-- finer dept_code. Mapping is demo-only — real roster carries its own values.
+-- ============================================================
+update public.profiles set department = case dept_code
+  when 'ENG'       then 'CEVC1'
+  when 'PM'        then 'CEVC2'
+  when 'DESIGN'    then 'CEVC3'
+  when 'QA'        then 'CEVC4'
+  when 'DEVOPS'    then 'Infra'
+  when 'HR'        then 'OPD'
+  when 'BA'        then 'OPD'
+  when 'MARKETING' then 'OPD'
+  else department
+end
+where department is null;
+
+-- ============================================================
+-- Special day (×2 hearts) — seed TODAY (Asia/Ho_Chi_Minh) so the special-day
+-- heart path is testable locally. Remove / adjust for prod.
+-- ============================================================
+insert into public.special_days (event_date, multiplier, label)
+values ((now() at time zone 'Asia/Ho_Chi_Minh')::date, 2, 'Demo special day')
+on conflict (event_date) do nothing;
+
+-- ============================================================
 -- DEMO KUDOS (local / testing) — sample messages exchanged between the
 -- profiles above so the /kudos feed and Hero tiers are populated.
 --
