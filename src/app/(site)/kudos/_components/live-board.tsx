@@ -54,7 +54,19 @@ export function LiveBoard({
 
   // Realtime: a change anywhere → re-render server data (router.refresh re-runs
   // the RSC fetch against the masked view; raw payloads are never rendered).
-  useEffect(() => subscribeBoard(() => router.refresh()), [router]);
+  // Debounced so a burst of reactions coalesces into one refresh (avoids a
+  // thundering herd of 5-query refetches under event-day load).
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = subscribeBoard(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => router.refresh(), 800);
+    });
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
+  }, [router]);
 
   const onFilterChange = useCallback(
     (next: HighlightFilters) => {

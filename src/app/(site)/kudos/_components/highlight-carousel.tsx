@@ -25,8 +25,6 @@ interface HighlightCarouselProps {
   departments: readonly string[];
   filters: HighlightFilters;
   onFilterChange: (filters: HighlightFilters) => void;
-  onHeart?: (id: string) => void;
-  onCopyLink?: (id: string) => void;
   onViewDetails?: (id: string) => void;
 }
 
@@ -38,8 +36,6 @@ export function HighlightCarousel({
   departments,
   filters,
   onFilterChange,
-  onHeart,
-  onCopyLink,
   onViewDetails,
 }: HighlightCarouselProps) {
   const { t } = useTranslations();
@@ -185,20 +181,14 @@ export function HighlightCarousel({
             className="w-full"
           >
             <CarouselContent className="-ml-6">
-              {data.map((row, idx) => (
+              {data.map((row) => (
                 <CarouselItem
                   key={row.id}
                   // basis = card width + pl-6 gutter (box-border), so the CARD itself
                   // reaches 528px (→ 525px tall via its aspect ratio); shrinks on small screens.
                   className="pl-6 basis-[clamp(324px,80vw,552px)] shrink-0"
                 >
-                  <HighlightCard
-                    row={row}
-                    isActive={idx === current}
-                    onHeart={onHeart}
-                    onCopyLink={onCopyLink}
-                    onViewDetails={onViewDetails}
-                  />
+                  <HighlightCard row={row} onViewDetails={onViewDetails} />
                 </CarouselItem>
               ))}
             </CarouselContent>

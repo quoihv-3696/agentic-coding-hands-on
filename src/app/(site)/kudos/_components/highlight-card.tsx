@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/button";
 import { HeartIcon, LinkIcon, SendIcon, UpIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import type { HeroTier, KudoFeedRow } from "@/lib/kudos/types";
+import { toggleReaction } from "@/lib/kudos/actions";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { TierBadge } from "./tier-badge";
 
@@ -78,20 +80,41 @@ function PersonInfo({
 
 export interface HighlightCardProps {
   row: KudoFeedRow;
-  /** Whether this card is the active center card */
-  isActive?: boolean;
-  onHeart?: (id: string) => void;
-  onCopyLink?: (id: string) => void;
   onViewDetails?: (id: string) => void;
 }
 
-export function HighlightCard({
-  row,
-  onHeart,
-  onCopyLink,
-  onViewDetails,
-}: HighlightCardProps) {
+export function HighlightCard({ row, onViewDetails }: HighlightCardProps) {
   const { t } = useTranslations();
+
+  // Optimistic heart — reconciled against the server (same as KudoCard).
+  const [hearted, setHearted] = useState(row.viewerHasReacted ?? false);
+  const [heartCount, setHeartCount] = useState(row.reactionCount);
+  const [pending, setPending] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  async function handleHeart() {
+    if (pending) return;
+    const next = !hearted;
+    setHearted(next);
+    setHeartCount((c) => c + (next ? 1 : -1));
+    setPending(true);
+    const result = await toggleReaction(row.id);
+    if ("error" in result) {
+      setHearted(!next); // rollback
+      setHeartCount((c) => c + (next ? -1 : 1));
+    } else {
+      setHearted(result.reacted);
+    }
+    setPending(false);
+  }
+
+  function handleCopyLink() {
+    navigator.clipboard
+      .writeText(`${window.location.origin}/kudos/${row.id}`)
+      .catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   // Format time: "10:00 - 10/30/2025"
   const formattedTime = (() => {
@@ -104,8 +127,16 @@ export function HighlightCard({
     return `${hh}:${mm} - ${month}/${day}/${year}`;
   })();
 
-  // Strip HTML tags from bodyHtml for display
-  const bodyText = row.bodyHtml.replace(/<[^>]*>/g, "");
+  // Strip HTML tags, then decode the common entities so e.g. "a &gt; b" reads
+  // "a > b" (the body is rendered as plain text in the highlight card).
+  const bodyText = row.bodyHtml
+    .replace(/<[^>]*>/g, "")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
 
   // Max 5 hashtags
   const visibleHashtags = row.hashtags.slice(0, 5);
@@ -188,30 +219,31 @@ export function HighlightCard({
         {/* Heart count + icon (gray inactive → red active; heart.svg fill overridden) */}
         <Button
           variant="text"
-          onClick={() => onHeart?.(row.id)}
+          onClick={handleHeart}
           aria-label={t("kudosFeed.heart")}
+          aria-pressed={hearted}
           className="gap-1 px-0 text-secondary text-2xl font-bold leading-8"
           rightIcon={
             <HeartIcon
               className={cn(
                 "size-8 transition-colors [&_path]:fill-current",
-                row.viewerHasReacted ? "text-error" : "text-secondary-2",
+                hearted ? "text-error" : "text-secondary-2",
               )}
             />
           }
         >
-          {row.reactionCount.toLocaleString("vi-VN")}
+          {heartCount.toLocaleString("vi-VN")}
         </Button>
 
         {/* Copy Link + View Details — shared Button, text variant */}
         <div className="flex items-center text-secondary">
           <Button
             variant="text"
-            onClick={() => onCopyLink?.(row.id)}
+            onClick={handleCopyLink}
             rightIcon={<LinkIcon />}
             className="text-secondary"
           >
-            {t("kudosBoard.copyLink")}
+            {copied ? t("kudosBoard.copyLinkToast") : t("kudosBoard.copyLink")}
           </Button>
           <Button
             variant="text"

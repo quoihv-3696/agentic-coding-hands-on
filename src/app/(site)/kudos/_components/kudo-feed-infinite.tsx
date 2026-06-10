@@ -31,9 +31,13 @@ export function KudoFeedInfinite({
   const [error, setError] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
+  // Ref guard (not `loading` state) so `fetchNext`'s identity is stable — otherwise
+  // it re-registers the observer mid-fetch and can fire a second request.
+  const loadingRef = useRef(false);
 
   const fetchNext = useCallback(async () => {
-    if (!cursor || loading) return;
+    if (!cursor || loadingRef.current) return;
+    loadingRef.current = true;
     setLoading(true);
     setError(null);
     try {
@@ -46,8 +50,9 @@ export function KudoFeedInfinite({
       );
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
-  }, [cursor, loading, loadMore]);
+  }, [cursor, loadMore]);
 
   // IntersectionObserver — fires fetchNext when sentinel enters the viewport.
   // No external dependency; built-in browser API only.

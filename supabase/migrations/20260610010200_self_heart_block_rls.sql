@@ -14,8 +14,13 @@ create policy "reactions: not self insert"
     and (
       select k.sender_profile_id from public.kudos k where k.id = kudo_id
     ) is distinct from (
+      -- Resolve the caller's profile by auth link, then by verified email
+      -- (matches createKudo) so a sender whose profile isn't auth-linked yet
+      -- still cannot heart their own kudo.
       select id from public.profiles
       where auth_user_id = (select auth.uid())
+         or email = (select auth.email())
+      order by (auth_user_id = (select auth.uid())) desc nulls last
       limit 1
     )
   );

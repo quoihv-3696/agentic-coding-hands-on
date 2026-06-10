@@ -73,10 +73,21 @@ function mapFeedRow(row: KudoFeedDbRow): KudoFeedRow {
 function encodeCursor(row: KudoFeedRow): string {
   return `${row.createdAt}__${row.id}`;
 }
+// `loadFeedPage` is a public server action, so the cursor is attacker-controlled.
+// Its parts are interpolated into a PostgREST `.or()` filter string — validate
+// strictly (ISO timestamp + UUID) so a crafted cursor cannot inject filter syntax
+// (pagination bypass / scan-based DoS). Anything malformed → treat as first page.
+const CURSOR_TS_RE = /^\d{4}-\d{2}-\d{2}T[\d:.]+(?:[+-]\d{2}:?\d{2}|Z)$/;
+const CURSOR_ID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function decodeCursor(cursor: string): { ts: string; id: string } | null {
   const idx = cursor.lastIndexOf("__");
   if (idx < 0) return null;
-  return { ts: cursor.slice(0, idx), id: cursor.slice(idx + 2) };
+  const ts = cursor.slice(0, idx);
+  const id = cursor.slice(idx + 2);
+  if (!CURSOR_TS_RE.test(ts) || !CURSOR_ID_RE.test(id)) return null;
+  return { ts, id };
 }
 
 /** Flag which of the given rows the current viewer has hearted (per-user toggle state). */

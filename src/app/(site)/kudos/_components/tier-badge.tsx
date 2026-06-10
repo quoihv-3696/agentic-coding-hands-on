@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { HERO_TIER_LABEL_KEY } from "@/lib/kudos/tiers";

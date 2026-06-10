@@ -165,11 +165,24 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
     .select("sender_profile_id")
     .eq("id", kudoId)
     .maybeSingle();
-  const { data: myProfile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("auth_user_id", user.id)
-    .maybeSingle();
+  // Resolve the caller's profile by auth link, falling back to email — mirrors
+  // createKudo, so a sender whose profile isn't auth-linked yet is still caught.
+  let myProfile = (
+    await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_user_id", user.id)
+      .maybeSingle()
+  ).data;
+  if (!myProfile && user.email) {
+    myProfile = (
+      await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", user.email)
+        .maybeSingle()
+    ).data;
+  }
   if (kudoRow && myProfile && kudoRow.sender_profile_id === myProfile.id) {
     return { error: "You cannot heart your own Kudo." };
   }
@@ -189,6 +202,11 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
     hearts_awarded: heartsAwarded,
   });
   if (insertError) {
+    // 23505 = unique violation: a reaction already exists (rapid double-tap /
+    // race). Idempotent success — no double-count, no error toast.
+    if (insertError.code === "23505") {
+      return { success: true, reacted: true, heartsDelta: 0 };
+    }
     console.error("[kudos/actions] toggleReaction insert error:", insertError.message);
     return { error: "Could not update reaction." };
   }
@@ -204,6 +222,13 @@ export async function loadFeedPage(
   cursor: string,
   filters?: HighlightFilters,
 ): Promise<FeedPage> {
+  // Public server action — gate on auth (the kudos_feed view is authenticated-only,
+  // but reject explicitly rather than leak an empty page to anonymous callers).
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { rows: [], nextCursor: null };
   return getFeed({ cursor, filters });
 }
 
