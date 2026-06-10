@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  images: {
+    // Remote hosts allowed for next/image. lh3.googleusercontent.com = real Google
+    // profile photos (prod); i.pravatar.cc + picsum.photos = local seed/demo content.
+    remotePatterns: [
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "i.pravatar.cc" },
+      { protocol: "https", hostname: "picsum.photos" },
+    ],
+  },
   turbopack: {
     rules: {
       // `import Icon from "...svg?react"` -> React component (SVGR).

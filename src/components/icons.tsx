@@ -11,3 +11,7 @@ export { default as TargetIcon } from "@/assets/icons/target.svg?react";
 export { default as DiamondIcon } from "@/assets/icons/diamond.svg?react";
 export { default as LicenseIcon } from "@/assets/icons/license.svg?react";
 export { default as CloseIcon } from "@/assets/icons/close.svg?react";
+export { default as HeartIcon } from "@/assets/icons/heart.svg?react";
+export { default as LinkIcon } from "@/assets/icons/link.svg?react";
+export { default as SendIcon } from "@/assets/icons/send.svg?react";
+export { default as SearchIcon } from "@/assets/icons/search.svg?react";

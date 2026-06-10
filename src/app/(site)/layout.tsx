@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "./_components/site-header";
 
 /**
@@ -18,6 +19,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     <>
       <SiteHeader authed={!!user} isAdmin={isAdmin} />
       {children}
+      <Toaster />
     </>
   );
 }

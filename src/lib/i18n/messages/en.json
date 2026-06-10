@@ -232,5 +232,36 @@
       "super": "Super Hero",
       "legend": "Legend Hero"
     }
+  },
+  "kudosBoard": {
+    "subtitle": "Sun* Annual Awards 2025",
+    "hero": { "title": "Recognition & appreciation system" },
+    "input": { "placeholder": "Who would you like to thank and recognize today?" },
+    "searchSunner": "Search Sunner profile",
+    "highlight": {
+      "title": "HIGHLIGHT KUDOS",
+      "filterHashtag": "Hashtag",
+      "filterDept": "Department",
+      "empty": "No Kudos yet."
+    },
+    "allKudos": { "title": "ALL KUDOS", "empty": "No Kudos yet." },
+    "viewDetails": "View details",
+    "copyLink": "Copy Link",
+    "copyLinkToast": "Link copied — ready to share!",
+    "stats": {
+      "received": "Kudos you received",
+      "sent": "Kudos you sent",
+      "hearts": "Hearts you received",
+      "boxOpened": "Secret Boxes opened",
+      "boxUnopened": "Secret Boxes unopened",
+      "openGift": "Open Secret Box"
+    },
+    "secretBox": { "comingSoon": "Secret Box is coming soon!" },
+    "leaderboard": {
+      "promotions": "10 SUNNERS RECENTLY PROMOTED",
+      "gifts": "10 SUNNERS WHO RECENTLY RECEIVED GIFTS",
+      "empty": "No data yet"
+    },
+    "stars": { "tooltip": "1★ = 10 Kudos · 2★ = 20 Kudos · 3★ = 50 Kudos" }
   }
 }

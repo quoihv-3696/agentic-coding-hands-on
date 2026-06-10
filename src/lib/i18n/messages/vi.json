@@ -232,5 +232,36 @@
       "super": "Super Hero",
       "legend": "Legend Hero"
     }
+  },
+  "kudosBoard": {
+    "subtitle": "Sun* Annual Awards 2025",
+    "hero": { "title": "Hệ thống ghi nhận lời cảm ơn" },
+    "input": { "placeholder": "Hôm nay, bạn muốn gửi lời cảm ơn và ghi nhận đến ai?" },
+    "searchSunner": "Tìm kiếm profile Sunner",
+    "highlight": {
+      "title": "HIGHLIGHT KUDOS",
+      "filterHashtag": "Hashtag",
+      "filterDept": "Phòng ban",
+      "empty": "Hiện tại chưa có Kudos nào."
+    },
+    "allKudos": { "title": "ALL KUDOS", "empty": "Hiện tại chưa có Kudos nào." },
+    "viewDetails": "Xem chi tiết",
+    "copyLink": "Copy Link",
+    "copyLinkToast": "Link copied — ready to share!",
+    "stats": {
+      "received": "Số Kudos bạn nhận được",
+      "sent": "Số Kudos bạn đã gửi",
+      "hearts": "Số tim bạn nhận được",
+      "boxOpened": "Số Secret Box bạn đã mở",
+      "boxUnopened": "Số Secret Box chưa mở",
+      "openGift": "Mở Secret Box"
+    },
+    "secretBox": { "comingSoon": "Tính năng Secret Box sẽ sớm ra mắt!" },
+    "leaderboard": {
+      "promotions": "10 SUNNER CÓ SỰ THĂNG HẠNG MỚI NHẤT",
+      "gifts": "10 SUNNER NHẬN QUÀ MỚI NHẤT",
+      "empty": "Chưa có dữ liệu"
+    },
+    "stars": { "tooltip": "1★ = 10 Kudos · 2★ = 20 Kudos · 3★ = 50 Kudos" }
   }
 }

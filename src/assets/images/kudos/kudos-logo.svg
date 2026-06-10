@@ -1,0 +1,18 @@
+<!--
+  PLACEHOLDER — replace with the real asset.
+  Source: MoMorph fileKey=9ypp4enmFmdK3YAFJLIu6C, nodeId=2940:13440 (MM_MEDIA_Kudos logo)
+  Download via: plans/260609-1544-kudos-live-board-core/data/hero-media.json
+  Figma dimensions: 593×104px
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593 104" width="593" height="104">
+  <text
+    x="0"
+    y="80"
+    font-family="Montserrat, sans-serif"
+    font-size="88"
+    font-weight="900"
+    font-style="italic"
+    letter-spacing="-2"
+    fill="#FFEA9E"
+  >KUDOS</text>
+</svg>
