@@ -1,54 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { hashtagLabel } from "@/lib/kudos/hashtags";
 import { toggleReaction } from "@/lib/kudos/actions";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import type { KudoFeedRow } from "@/lib/kudos/types";
+import { Button } from "@/components/button";
+import { HeartIcon, LinkIcon } from "@/components/icons";
 import { KudoCardHeader } from "./kudo-card-header";
+import { KudoGallery } from "./kudo-gallery";
 
 interface Props {
   row: KudoFeedRow;
 }
 
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
+/** Format a createdAt ISO string → "HH:MM - MM/DD/YYYY" matching Figma C.3.4. */
+function formatCardTime(iso: string): string {
+  try {
+    const d = new Date(iso);
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${hh}:${mm} - ${month}/${day}/${year}`;
+  } catch {
+    return iso;
+  }
 }
 
-function LinkIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
-}
+/** Max visible hashtag pills (Figma C.3.7: max 5 + "…"). */
+const MAX_HASHTAGS = 5;
 
 export function KudoCard({ row }: Props) {
   const { t } = useTranslations();
@@ -57,24 +40,20 @@ export function KudoCard({ row }: Props) {
   const [hearted, setHearted] = useState(row.viewerHasReacted ?? false);
   const [heartCount, setHeartCount] = useState(row.reactionCount);
   const [pending, setPending] = useState(false);
-
   const [copied, setCopied] = useState(false);
 
   async function handleHeart() {
     if (pending) return;
     const next = !hearted;
-    // Optimistic update
     setHearted(next);
     setHeartCount((c) => c + (next ? 1 : -1));
     setPending(true);
 
     const result = await toggleReaction(row.id);
     if ("error" in result) {
-      // Roll back on failure
       setHearted(!next);
       setHeartCount((c) => c + (next ? -1 : 1));
     } else {
-      // Reconcile with the server's truth
       setHearted(result.reacted);
     }
     setPending(false);
@@ -83,18 +62,25 @@ export function KudoCard({ row }: Props) {
   function handleCopyLink() {
     const url = `${window.location.origin}/kudos/${row.id}`;
     navigator.clipboard.writeText(url).catch(() => {
-      /* swallow clipboard errors in mock */
+      /* swallow clipboard errors */
     });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
+  const visibleHashtags = row.hashtags.slice(0, MAX_HASHTAGS);
+  const hasMoreHashtags = row.hashtags.length > MAX_HASHTAGS;
+
   return (
+    /*
+     * Figma C.3_KUDO Post: bg rgba(255,248,225) = #FFF8E1, rounded-3xl (24px),
+     * padding 40px 40px 16px 40px (pt-10 px-10 pb-4), gap-4 column.
+     */
     <article
-      className="flex flex-col gap-4 rounded-2xl bg-[#FFF8E1] p-6 shadow-sm"
+      className="flex flex-col gap-4 rounded-3xl bg-[#FFF8E1] px-10 pt-10 pb-4 w-full"
       aria-label={row.title}
     >
-      {/* Header: sender → recipient + hero badge */}
+      {/* C.3.1–C.3.3  Sender → send-icon → Recipient */}
       <KudoCardHeader
         isAnonymous={row.isAnonymous}
         anonymousNickname={row.anonymousNickname}
@@ -105,87 +91,116 @@ export function KudoCard({ row }: Props) {
         recipientAvatarUrl={row.recipientAvatarUrl}
         recipientDeptCode={row.recipientDeptCode}
         recipientHeroTier={row.recipientHeroTier}
+        senderStarCount={row.senderStarCount}
+        recipientStarCount={row.recipientStarCount}
       />
 
-      {/* Divider */}
-      <hr className="border-[#998C5F]/30" />
+      {/* Rectangle 14 — gold divider */}
+      <hr className="border-[#FFEA9E]" />
 
-      {/* Title */}
-      <h3 className="font-bold text-lg leading-snug text-[#00101A]">
-        {row.title}
-      </h3>
+      {/* Content block — Figma "Content" frame: gap-4 column */}
+      <div className="flex flex-col gap-4">
+        {/* C.3.4 Time — Figma: Montserrat 16 bold, #999, tracking 0.5px */}
+        <p className="text-base font-bold leading-6 text-[#999999] tracking-[0.5px]">
+          {formatCardTime(row.createdAt)}
+        </p>
 
-      {/* Body HTML — `body_html` is sanitized server-side in createKudo
-          (DOMPurify allowlist) before it is ever stored, so it is safe to render. */}
-      {row.bodyHtml && (
+        {/*
+         * C.3.5 Content box — Figma Frame 425:
+         *   border 1px solid #FFEA9E, bg rgba(255,234,158,0.4),
+         *   border-radius 12px, padding 16px 24px
+         */}
         <div
-          className="text-sm leading-relaxed text-[#00101A]/80 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-bold [&_em]:italic [&_a]:text-[#CF1322] [&_a]:underline [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
-          dangerouslySetInnerHTML={{ __html: row.bodyHtml }}
-        />
-      )}
+          className="rounded-xl px-6 py-4"
+          style={{
+            border: "1px solid #FFEA9E",
+            background: "rgba(255, 234, 158, 0.40)",
+          }}
+        >
+          {/* Title */}
+          <h3 className="font-bold text-lg leading-snug text-[#00101A] mb-2">
+            {row.title}
+          </h3>
 
-      {/* Image strip */}
-      {row.imageUrls.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {row.imageUrls.map((url, i) => (
+          {/*
+           * Body HTML — sanitized server-side before storage; safe to render.
+           * Figma: Montserrat 20 bold, line-height 32px, clamped to 5 lines.
+           * line-clamp-5 is a static class (Tailwind JIT-safe).
+           */}
+          {row.bodyHtml && (
             <div
-              key={url}
-              className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-[#998C5F]/40"
-            >
-              <Image
-                src={url}
-                alt={`${row.title} image ${i + 1}`}
-                fill
-                sizes="80px"
-                className="object-cover"
-                unoptimized
-              />
-            </div>
-          ))}
+              className={cn(
+                "text-xl font-bold leading-8 text-[#00101A] line-clamp-5",
+                "[&_p]:mb-2 [&_p:last-child]:mb-0 [&_strong]:font-bold [&_em]:italic",
+                "[&_a]:text-[#CF1322] [&_a]:underline",
+                "[&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4",
+              )}
+              dangerouslySetInnerHTML={{ __html: row.bodyHtml }}
+            />
+          )}
         </div>
-      )}
 
-      {/* Hashtags */}
-      {row.hashtags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {row.hashtags.map((slug) => (
-            <span
-              key={slug}
-              className="text-xs font-bold text-[#CF1322] uppercase tracking-wide"
-            >
-              {hashtagLabel(slug)}
-            </span>
-          ))}
-        </div>
-      )}
+        {/* C.3.6 Image gallery — up to 5 thumbnails, click → Dialog lightbox */}
+        {row.imageUrls.length > 0 && (
+          <KudoGallery imageUrls={row.imageUrls} altPrefix={row.title} />
+        )}
 
-      {/* Footer: heart count + copy link */}
-      <div className="flex items-center justify-between pt-1">
-        <button
-          type="button"
+        {/*
+         * C.3.7 Hashtag pills — Figma: Montserrat 16 bold, color #D4271D,
+         * row gap ~29.9px, max 5 visible + "…" overflow indicator.
+         */}
+        {visibleHashtags.length > 0 && (
+          <div className="flex flex-row flex-wrap items-center gap-[29.9px]">
+            {visibleHashtags.map((slug) => (
+              <span
+                key={slug}
+                className="text-base font-bold leading-6 text-[#D4271D] tracking-[0.5px]"
+              >
+                {hashtagLabel(slug)}
+              </span>
+            ))}
+            {hasMoreHashtags && (
+              <span className="text-base font-bold leading-6 text-[#D4271D] tracking-[0.5px]">
+                …
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Rectangle 15 — gold divider */}
+      <hr className="border-[#FFEA9E]" />
+
+      {/* C.4 Action bar — Figma: row, space-between, gap-6, height 56px */}
+      <div className="flex flex-row items-center justify-between gap-6">
+        {/*
+         * C.4.1 Hearts — Figma: count 24px bold left + 32px heart icon right, gap-1.
+         * Gray (#00101A) when not hearted, red (#CF1322) when hearted.
+         */}
+        <Button
+          variant="text"
           onClick={handleHeart}
           aria-label={t("kudosFeed.heart")}
           aria-pressed={hearted}
+          rightIcon={<HeartIcon className="size-8 [&_path]:fill-current" />}
           className={cn(
-            "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors",
-            hearted
-              ? "bg-[#CF1322]/10 text-[#CF1322]"
-              : "text-[#998C5F] hover:bg-[#998C5F]/10"
+            "gap-1 px-0 text-2xl font-bold leading-8 tabular-nums transition-colors",
+            hearted ? "text-[#CF1322]" : "text-[#00101A]",
           )}
         >
-          <HeartIcon filled={hearted} />
-          <span>{heartCount}</span>
-        </button>
+          {heartCount.toLocaleString()}
+        </Button>
 
-        <button
-          type="button"
+        {/* C.4.2 Copy Link — shared Button, text variant + link icon */}
+        <Button
+          variant="text"
           onClick={handleCopyLink}
-          aria-label={t("kudosFeed.copyLink")}
-          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-[#998C5F] transition-colors hover:bg-[#998C5F]/10"
+          aria-label={t("kudosBoard.copyLink")}
+          rightIcon={<LinkIcon />}
+          className="text-secondary"
         >
-          <LinkIcon />
-          <span>{copied ? t("kudosFeed.copied") : t("kudosFeed.copyLink")}</span>
-        </button>
+          {copied ? t("kudosBoard.copyLinkToast") : t("kudosBoard.copyLink")}
+        </Button>
       </div>
     </article>
   );

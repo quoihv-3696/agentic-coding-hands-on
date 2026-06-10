@@ -1,4 +1,5 @@
 import type { HeroTier } from "./tiers";
+import type { StarCount } from "./stars";
 
 /**
  * Cross-track CONTRACT for the Kudos feature.
@@ -56,13 +57,62 @@ export interface KudoFeedRow extends Omit<Kudo, "senderProfileId"> {
   senderDisplayName: string | null;
   senderAvatarUrl: string | null;
   senderDeptCode: string | null;
+  /** Sender's canonical division (Live Board filter); NULL when anonymous. */
+  senderDepartment: string | null;
+  /** Sender's Hero tier; NULL when anonymous. */
+  senderHeroTier: HeroTier | null;
+  /** Sender's star count (0–3); NULL when anonymous. */
+  senderStarCount: StarCount | null;
   recipientDisplayName: string;
   recipientAvatarUrl: string | null;
   recipientDeptCode: string | null;
+  /** Recipient's canonical division (Live Board filter). */
+  recipientDepartment: string | null;
   recipientHeroTier: HeroTier;
+  /** Recipient's star count (0–3) — runs alongside the Hero tier. */
+  recipientStarCount: StarCount;
   reactionCount: number;
   /** Whether the current viewer has hearted this Kudo (per-user; from Phase 05). */
   viewerHasReacted?: boolean;
+}
+
+/** Filters that drive BOTH the Highlight carousel and the All Kudos feed. */
+export interface HighlightFilters {
+  hashtag?: string;
+  /** Canonical department code (see departments.ts), NOT the free-form dept_code. */
+  department?: string;
+}
+
+/** A selectable department in the "Phòng ban" filter (code === canonical division). */
+export interface DepartmentOption {
+  code: string;
+  label: string;
+}
+
+/** Sidebar stat block (spec D.1). Secret Box fields are STUB → 0 this iteration. */
+export interface StatsSummary {
+  kudosReceived: number;
+  kudosSent: number;
+  /** Total hearts across all kudos the viewer SENT (hearts economy credits the sender). */
+  heartsReceived: number;
+  secretBoxOpened: number;
+  secretBoxUnopened: number;
+}
+
+/** A row in a sidebar leaderboard (promotions = real; gifts = STUB empty). */
+export interface LeaderboardEntry {
+  profileId: string;
+  displayName: string;
+  avatarUrl: string | null;
+  deptCode: string | null;
+  /** e.g. "Thăng hạng Super" (promotions) or gift description (gifts → stub). */
+  description: string;
+}
+
+/** One page of the infinite-scroll feed (keyset cursor on created_at,id). */
+export interface FeedPage {
+  rows: KudoFeedRow[];
+  nextCursor: string | null;
 }
 
 /** Payload the write/send form submits to `createKudo` (Phase 05). */
@@ -77,4 +127,4 @@ export interface CreateKudoInput {
   anonymousNickname?: string | null;
 }
 
-export type { HeroTier };
+export type { HeroTier, StarCount };

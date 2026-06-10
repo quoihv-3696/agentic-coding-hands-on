@@ -13,7 +13,7 @@ export default async function KudoDetailPage({
   if (!kudo) notFound();
 
   return (
-    <main className="min-h-screen bg-secondary px-4 py-10 md:px-8">
+    <main className="min-h-screen bg-secondary px-4 pt-[180px] pb-10 md:px-8">
       <div className="mx-auto max-w-2xl">
         <KudoCard row={kudo} />
       </div>

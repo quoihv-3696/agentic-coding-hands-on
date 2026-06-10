@@ -1,6 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
-import type { KudoFeedRow, Profile } from "./types";
+import type {
+  FeedPage,
+  HighlightFilters,
+  KudoFeedRow,
+  Profile,
+} from "./types";
 import type { HeroTier } from "./tiers";
+import type { StarCount } from "./stars";
+import { applyFeedFilters } from "./filters";
 
 /** Raw DB row from kudos_feed view (snake_case). */
 interface KudoFeedDbRow {
@@ -21,11 +28,16 @@ interface KudoFeedDbRow {
   sender_display_name: string | null;
   sender_avatar_url: string | null;
   sender_dept_code: string | null;
+  sender_department: string | null;
+  sender_hero_tier: string | null;
+  sender_star_count: number | null;
   recipient_display_name: string;
   recipient_avatar_url: string | null;
   recipient_dept_code: string | null;
+  recipient_department: string | null;
   reaction_count: number;
   recipient_hero_tier: string;
+  recipient_star_count: number;
 }
 
 function mapFeedRow(row: KudoFeedDbRow): KudoFeedRow {
@@ -44,48 +56,129 @@ function mapFeedRow(row: KudoFeedDbRow): KudoFeedRow {
     senderDisplayName: row.sender_display_name,
     senderAvatarUrl: row.sender_avatar_url,
     senderDeptCode: row.sender_dept_code,
+    senderDepartment: row.sender_department,
+    senderHeroTier: (row.sender_hero_tier as HeroTier | null) ?? null,
+    senderStarCount: (row.sender_star_count as StarCount | null) ?? null,
     recipientDisplayName: row.recipient_display_name,
     recipientAvatarUrl: row.recipient_avatar_url,
     recipientDeptCode: row.recipient_dept_code,
-    reactionCount: row.reaction_count,
+    recipientDepartment: row.recipient_department,
     recipientHeroTier: row.recipient_hero_tier as HeroTier,
+    recipientStarCount: (row.recipient_star_count as StarCount) ?? 0,
+    reactionCount: row.reaction_count,
   };
 }
 
-/** Fetch the latest kudos feed (newest first), flagged with the viewer's reactions. */
-export async function getFeed(limit = 20): Promise<KudoFeedRow[]> {
+/** Keyset cursor: "<created_at>__<id>" (stable ordering by created_at desc, id desc). */
+function encodeCursor(row: KudoFeedRow): string {
+  return `${row.createdAt}__${row.id}`;
+}
+// `loadFeedPage` is a public server action, so the cursor is attacker-controlled.
+// Its parts are interpolated into a PostgREST `.or()` filter string — validate
+// strictly (ISO timestamp + UUID) so a crafted cursor cannot inject filter syntax
+// (pagination bypass / scan-based DoS). Anything malformed → treat as first page.
+const CURSOR_TS_RE = /^\d{4}-\d{2}-\d{2}T[\d:.]+(?:[+-]\d{2}:?\d{2}|Z)$/;
+const CURSOR_ID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function decodeCursor(cursor: string): { ts: string; id: string } | null {
+  const idx = cursor.lastIndexOf("__");
+  if (idx < 0) return null;
+  const ts = cursor.slice(0, idx);
+  const id = cursor.slice(idx + 2);
+  if (!CURSOR_TS_RE.test(ts) || !CURSOR_ID_RE.test(id)) return null;
+  return { ts, id };
+}
+
+/** Flag which of the given rows the current viewer has hearted (per-user toggle state). */
+async function enrichViewerReactions(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  rows: KudoFeedRow[],
+): Promise<void> {
+  if (!rows.length) return;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data: reacted } = await supabase
+    .from("kudo_reactions")
+    .select("kudo_id")
+    .eq("reactor_auth_id", user.id)
+    .in(
+      "kudo_id",
+      rows.map((r) => r.id),
+    );
+  const reactedIds = new Set((reacted ?? []).map((r) => r.kudo_id as string));
+  for (const row of rows) row.viewerHasReacted = reactedIds.has(row.id);
+}
+
+/**
+ * Fetch a page of the feed (newest first), filtered, with a keyset cursor for
+ * infinite scroll. `nextCursor` is null when the last page is reached.
+ */
+export async function getFeed(
+  opts: { cursor?: string | null; filters?: HighlightFilters; limit?: number } = {},
+): Promise<FeedPage> {
+  const { cursor, filters, limit = 10 } = opts;
   const supabase = await createClient();
-  const { data, error } = await supabase
+
+  let query = supabase
     .from("kudos_feed")
     .select("*")
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .limit(limit);
 
+  query = applyFeedFilters(query, filters);
+
+  if (cursor) {
+    const c = decodeCursor(cursor);
+    if (c) {
+      // Keyset: rows strictly "after" the cursor in (created_at desc, id desc).
+      query = query.or(
+        `created_at.lt.${c.ts},and(created_at.eq.${c.ts},id.lt.${c.id})`,
+      );
+    }
+  }
+
+  const { data, error } = await query;
   if (error) {
     console.error("[kudos/queries] getFeed error:", error.message);
+    return { rows: [], nextCursor: null };
+  }
+
+  const rows = (data as KudoFeedDbRow[]).map(mapFeedRow);
+  await enrichViewerReactions(supabase, rows);
+
+  const nextCursor =
+    rows.length === limit ? encodeCursor(rows[rows.length - 1]) : null;
+  return { rows, nextCursor };
+}
+
+/** Top Kudos by heart count (Highlight carousel, spec B) — same filters as the feed. */
+export async function getHighlight(
+  filters?: HighlightFilters,
+  limit = 5,
+): Promise<KudoFeedRow[]> {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("kudos_feed")
+    .select("*")
+    .order("reaction_count", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  query = applyFeedFilters(query, filters);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("[kudos/queries] getHighlight error:", error.message);
     return [];
   }
 
   const rows = (data as KudoFeedDbRow[]).map(mapFeedRow);
-
-  // Flag which rows the current viewer has already hearted (so the toggle
-  // renders correctly across refreshes). One query for the visible ids.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user && rows.length) {
-    const { data: reacted } = await supabase
-      .from("kudo_reactions")
-      .select("kudo_id")
-      .eq("reactor_auth_id", user.id)
-      .in(
-        "kudo_id",
-        rows.map((r) => r.id),
-      );
-    const reactedIds = new Set((reacted ?? []).map((r) => r.kudo_id as string));
-    for (const row of rows) row.viewerHasReacted = reactedIds.has(row.id);
-  }
-
+  await enrichViewerReactions(supabase, rows);
   return rows;
 }
 
@@ -119,8 +212,6 @@ export async function searchProfiles(query: string): Promise<Profile[]> {
     .order("display_name")
     .limit(8);
 
-  // Empty query → return the first slice of the directory so the recipient
-  // picker shows options immediately on open (matches the design); typing filters.
   if (safe) {
     builder = builder.or(`display_name.ilike.%${safe}%,email.ilike.%${safe}%`);
   }

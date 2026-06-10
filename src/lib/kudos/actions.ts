@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import sanitizeHtml from "sanitize-html";
 import { createClient } from "@/lib/supabase/server";
-import { searchProfiles } from "./queries";
+import { getFeed, searchProfiles } from "./queries";
 import { createKudoSchema } from "./schema";
-import type { Profile } from "./types";
+import type { FeedPage, HighlightFilters, Profile } from "./types";
 
 // Server-side sanitization for TipTap body HTML. Uses sanitize-html (pure JS) —
 // NOT a DOM-based sanitizer (jsdom fails to bundle on Vercel serverless).
@@ -105,9 +105,23 @@ export async function createKudo(
   return { success: true, id: inserted.id as string };
 }
 
-type ToggleReactionResult = { error: string } | { success: true; reacted: boolean };
+type ToggleReactionResult =
+  | { error: string }
+  | { success: true; reacted: boolean; heartsDelta: number };
 
-/** Toggle a heart reaction on a kudo for the current user. */
+/** Current date (YYYY-MM-DD) in Asia/Ho_Chi_Minh — the TZ special days are keyed on. */
+function todayInIct(): string {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
+}
+
+/**
+ * Toggle a heart reaction on a kudo for the current user (hearts economy, spec C.4.1).
+ * - A heart credits the kudo's SENDER; the exact amount (1, or 2 on an admin special
+ *   day) is resolved at INSERT and stored in `hearts_awarded` so unlike revokes it
+ *   precisely (the `profile_heart_totals` SUM recomputes — no manual counters).
+ * - Self-heart is blocked here (defense-in-depth) on top of the RLS policy.
+ * - `heartsDelta` lets optimistic UI adjust the sender's heart total if shown.
+ */
 export async function toggleReaction(kudoId: string): Promise<ToggleReactionResult> {
   const supabase = await createClient();
 
@@ -117,10 +131,10 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
   } = await supabase.auth.getUser();
   if (authError || !user) return { error: "Unauthorized" };
 
-  // Check for existing reaction (no upsert-then-delete; explicit check per spec)
+  // Existing reaction? (explicit check per spec — no upsert-then-delete)
   const { data: existing, error: checkError } = await supabase
     .from("kudo_reactions")
-    .select("id")
+    .select("id, hearts_awarded")
     .eq("kudo_id", kudoId)
     .eq("reactor_auth_id", user.id)
     .maybeSingle();
@@ -140,18 +154,82 @@ export async function toggleReaction(kudoId: string): Promise<ToggleReactionResu
       return { error: "Could not update reaction." };
     }
     revalidatePath("/kudos");
-    return { success: true, reacted: false };
-  } else {
-    const { error: insertError } = await supabase
-      .from("kudo_reactions")
-      .insert({ kudo_id: kudoId, reactor_auth_id: user.id, reaction_type: "heart" });
-    if (insertError) {
-      console.error("[kudos/actions] toggleReaction insert error:", insertError.message);
-      return { error: "Could not update reaction." };
-    }
-    revalidatePath("/kudos");
-    return { success: true, reacted: true };
+    // Revoke exactly what was granted (the stored hearts_awarded leaves the SUM).
+    return { success: true, reacted: false, heartsDelta: -(existing.hearts_awarded ?? 1) };
   }
+
+  // Self-heart guard (defense-in-depth; RLS also enforces it). Resolve the kudo's
+  // sender and the caller's profile, refuse if they match.
+  const { data: kudoRow } = await supabase
+    .from("kudos")
+    .select("sender_profile_id")
+    .eq("id", kudoId)
+    .maybeSingle();
+  // Resolve the caller's profile by auth link, falling back to email — mirrors
+  // createKudo, so a sender whose profile isn't auth-linked yet is still caught.
+  let myProfile = (
+    await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_user_id", user.id)
+      .maybeSingle()
+  ).data;
+  if (!myProfile && user.email) {
+    myProfile = (
+      await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", user.email)
+        .maybeSingle()
+    ).data;
+  }
+  if (kudoRow && myProfile && kudoRow.sender_profile_id === myProfile.id) {
+    return { error: "You cannot heart your own Kudo." };
+  }
+
+  // Resolve hearts_awarded against today's special day (ICT). Default 1.
+  const { data: special } = await supabase
+    .from("special_days")
+    .select("multiplier")
+    .eq("event_date", todayInIct())
+    .maybeSingle();
+  const heartsAwarded = special?.multiplier ?? 1;
+
+  const { error: insertError } = await supabase.from("kudo_reactions").insert({
+    kudo_id: kudoId,
+    reactor_auth_id: user.id,
+    reaction_type: "heart",
+    hearts_awarded: heartsAwarded,
+  });
+  if (insertError) {
+    // 23505 = unique violation: a reaction already exists (rapid double-tap /
+    // race). Idempotent success — no double-count, no error toast.
+    if (insertError.code === "23505") {
+      return { success: true, reacted: true, heartsDelta: 0 };
+    }
+    console.error("[kudos/actions] toggleReaction insert error:", insertError.message);
+    return { error: "Could not update reaction." };
+  }
+  revalidatePath("/kudos");
+  return { success: true, reacted: true, heartsDelta: heartsAwarded };
+}
+
+/**
+ * Server-action wrapper around `getFeed` so the client infinite-scroll list can
+ * fetch the next page (keyset cursor + the active Highlight/All-Kudos filters).
+ */
+export async function loadFeedPage(
+  cursor: string,
+  filters?: HighlightFilters,
+): Promise<FeedPage> {
+  // Public server action — gate on auth (the kudos_feed view is authenticated-only,
+  // but reject explicitly rather than leak an empty page to anonymous callers).
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { rows: [], nextCursor: null };
+  return getFeed({ cursor, filters });
 }
 
 /**
