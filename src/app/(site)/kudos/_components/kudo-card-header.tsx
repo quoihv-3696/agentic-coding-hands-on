@@ -2,8 +2,9 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslations } from "@/lib/i18n/i18n-context";
-import type { KudoFeedRow, StarCount } from "@/lib/kudos/types";
+import type { HeroTier, KudoFeedRow, StarCount } from "@/lib/kudos/types";
 import { TierBadge } from "./tier-badge";
+import { SendIcon } from "@/components/icons";
 
 type Props = Pick<
   KudoFeedRow,
@@ -17,24 +18,24 @@ type Props = Pick<
   | "recipientDeptCode"
   | "recipientHeroTier"
 > & {
+  /** Sender's Hero tier — shown like the Highlight card (NULL when anonymous). */
+  senderHeroTier?: HeroTier | null;
   /** Stars (hoa thị) shown alongside the Hero tier (10/20/50 received). */
   senderStarCount?: StarCount | null;
   recipientStarCount?: StarCount | null;
 };
 
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0].toUpperCase())
-    .join("");
+/** ★ row — matches the Highlight card (primary gold, xs). */
+function StarRow({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span className="text-primary-1 text-xs font-bold">{"★".repeat(count)}</span>
+  );
 }
 
 /**
- * A person column — Figma C.3.1 / C.3.3 "Infor" component:
- * 64px avatar (circular, white border) centered above name + dept/tier row.
- * Width: 235px in Figma; we let it shrink naturally in flex layouts.
+ * Person column — mirrors the Highlight card's `PersonInfo`:
+ * 64px white-bordered avatar centered above name + a `dept • ★ tier` meta row.
  */
 function PersonColumn({
   displayName,
@@ -46,83 +47,38 @@ function PersonColumn({
   displayName: string;
   avatarUrl: string | null;
   deptCode: string | null;
-  heroTier?: KudoFeedRow["recipientHeroTier"];
+  heroTier?: HeroTier | null;
   starCount?: StarCount | null;
 }) {
-  const { t } = useTranslations();
   const stars = starCount ?? 0;
 
   return (
-    <div className="flex flex-col items-center gap-3.25 w-58.75">
-      {/* 64×64 circular avatar — Figma: border 1.869px solid #FFF */}
-      <Avatar
-        size="default"
-        className="size-16 shrink-0 ring-2 ring-white ring-offset-0"
-      >
+    <div className="flex flex-col items-center gap-3 w-[235px]">
+      {/* 64×64 circular avatar, white border (matches Highlight) */}
+      <Avatar size="default" className="size-16 shrink-0 border-2 border-white">
         <AvatarImage src={avatarUrl ?? undefined} alt={displayName} />
-        <AvatarFallback className="bg-[#998C5F]/20 text-[#00101A] font-bold text-xs">
-          {initials(displayName)}
+        <AvatarFallback className="bg-gray-400 text-white text-lg font-bold">
+          {displayName?.charAt(0)?.toUpperCase() ?? "?"}
         </AvatarFallback>
       </Avatar>
 
-      {/* Name + dept/tier row */}
-      <div className="flex flex-col items-start gap-0.5 w-full">
-        {/* Name — Figma: Montserrat 16 bold, center, color #00101A */}
-        <span
-          className="w-full text-center font-bold text-base leading-6 text-[#00101A] truncate"
-          title={displayName}
-        >
+      {/* Name + meta */}
+      <div className="flex flex-col items-center gap-0.5 w-full">
+        <span className="text-secondary text-[16px] font-bold leading-6 text-center truncate w-full">
           {displayName}
         </span>
-
-        {/* Huy hiệu + Sao row — Figma: row, center, gap-2.5 */}
-        <div className="flex flex-row items-center justify-center gap-2.5 w-full">
-          {/* Dept code — Figma: Montserrat 14 bold, color #999 */}
+        <div className="flex items-center gap-2 justify-center flex-wrap">
           {deptCode && (
-            <span className="text-[14px] font-bold leading-5 text-[#999999] truncate max-w-14">
+            <span className="text-secondary-2 text-[14px] font-bold leading-5">
               {deptCode}
             </span>
           )}
-
-          {/* Hero tier badge (shared component) */}
+          <div className="size-1 rounded-full bg-secondary-2" />
+          <StarRow count={stars} />
           <TierBadge tier={heroTier} />
-
-          {/* Số hoa thị (stars) — alongside the Hero tier (10/20/50 received) */}
-          {stars > 0 && (
-            <span
-              className="shrink-0 text-[#FFEA9E] text-sm leading-none"
-              title={t("kudosBoard.stars.tooltip")}
-              aria-label={`${stars} stars`}
-            >
-              {"★".repeat(stars)}
-            </span>
-          )}
         </div>
       </div>
     </div>
-  );
-}
-
-/** Send arrow icon — Figma C.3.2: 32×32 icon centered vertically in 123px column. */
-function SendIcon() {
-  return (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-      className="shrink-0 text-[#FFEA9E]"
-    >
-      <path
-        d="M6 16H26M26 16L18 8M26 16L18 24"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
@@ -144,6 +100,7 @@ export function KudoCardHeader({
   recipientAvatarUrl,
   recipientDeptCode,
   recipientHeroTier,
+  senderHeroTier,
   senderStarCount,
   recipientStarCount,
 }: Props) {
@@ -161,12 +118,13 @@ export function KudoCardHeader({
         displayName={senderName}
         avatarUrl={isAnonymous ? null : senderAvatarUrl}
         deptCode={isAnonymous ? null : senderDeptCode}
+        heroTier={isAnonymous ? null : senderHeroTier}
         starCount={isAnonymous ? null : senderStarCount}
       />
 
-      {/* C.3.2 Send icon — vertically centered in 123px height */}
-      <div className="flex items-center justify-center w-8 self-stretch py-4">
-        <SendIcon />
+      {/* C.3.2 Send icon — navy, top-aligned with the avatars (matches Highlight) */}
+      <div className="flex items-center pt-4 shrink-0">
+        <SendIcon className="size-8 text-secondary shrink-0" aria-hidden />
       </div>
 
       {/* C.3.3 Recipient + hero tier */}

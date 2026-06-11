@@ -114,8 +114,8 @@ export function LiveBoard({
         totalCount={spotlightTotal}
       />
 
-      <section className="mx-auto w-full max-w-6xl space-y-10 px-4 md:px-8">
-        <header className="">
+      <section className="mx-auto w-full max-w-6xl space-y-10">
+        <header className="pt-12">
           <p className="font-semibold text-secondary-1 text-2xl tracking-widest">
             {t("kudosBoard.subtitle")}
           </p>
