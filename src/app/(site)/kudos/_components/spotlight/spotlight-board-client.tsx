@@ -37,13 +37,8 @@ export function SpotlightBoardClient({
 }: SpotlightBoardClientProps) {
   const router = useRouter();
 
-  // Deterministic layout in virtual px space (recomputed only when the node set changes).
-  // Drop any node the packer couldn't place (off-canvas fallback at x<0): it's invisible,
-  // so excluding it also stops search from panning the canvas to empty space (review I-1).
-  const positioned = useMemo(
-    () => layoutNodes(nodes, LAYOUT_DIMS).filter((n) => n.x >= 0),
-    [nodes],
-  );
+  // Deterministic scatter in virtual px space (recomputed only when the node set changes).
+  const positioned = useMemo(() => layoutNodes(nodes, LAYOUT_DIMS), [nodes]);
 
   // Search matches against the visible positioned nodes (client-side, accent-insensitive).
   const search = useSpotlightSearch(positioned);

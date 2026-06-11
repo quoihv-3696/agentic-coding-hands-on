@@ -3,55 +3,21 @@
  *
  * All functions use the server Supabase client (async cookies) and must only
  * be called from Server Components or Server Actions — never from client code.
- *
- * "Latest kudo" path: queries the `kudos_spotlight_recipients` view added by
- * migration 20260610020000_create_kudos_spotlight_view.sql.  The view uses
- * DISTINCT ON per recipient + a grouped count subquery — one round-trip instead
- * of a two-step PostgREST aggregate.
  */
 import { createClient } from "@/lib/supabase/server";
 import type { SpotlightNode, KudoEvent } from "./types";
 
-/** Raw DB row from kudos_spotlight_recipients view (snake_case). */
-interface SpotlightRecipientRow {
-  recipient_profile_id: string;
+type RecipientProfile = {
   display_name: string;
-  dept_code: string | null;
   avatar_url: string | null;
-  kudos_count: number;
-  latest_kudo_id: string;
-  latest_kudo_at: string;
-}
+  dept_code: string | null;
+};
 
-function mapSpotlightRow(row: SpotlightRecipientRow): SpotlightNode {
-  return {
-    recipientProfileId: row.recipient_profile_id,
-    displayName: row.display_name,
-    deptCode: row.dept_code,
-    avatarUrl: row.avatar_url,
-    kudosCount: row.kudos_count,
-    latestKudoId: row.latest_kudo_id,
-    latestKudoAt: row.latest_kudo_at,
-  };
-}
-
-/**
- * Fetch all spotlight recipients (one row per person with >= 1 active kudo).
- * Backed by the `kudos_spotlight_recipients` view (security_invoker → RLS applies).
- */
-export async function getSpotlightRecipients(): Promise<SpotlightNode[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("kudos_spotlight_recipients")
-    .select("*")
-    .order("kudos_count", { ascending: false });
-
-  if (error) {
-    console.error("[kudos/spotlight] getSpotlightRecipients error:", error.message);
-    return [];
-  }
-
-  return (data as SpotlightRecipientRow[]).map(mapSpotlightRow);
+/** Supabase types the joined relation as an array; normalise to a single row. */
+function firstProfile(raw: unknown): RecipientProfile | undefined {
+  return (
+    Array.isArray(raw) ? raw[0] : raw
+  ) as RecipientProfile | undefined;
 }
 
 /**
@@ -60,6 +26,9 @@ export async function getSpotlightRecipients(): Promise<SpotlightNode[]> {
  * `latestKudoId` is THAT kudo's id (unique → its own scatter position + click
  * target), `latestKudoAt` is that kudo's time, and `kudosCount` is the
  * recipient's total (drives font size, so frequent recipients read larger).
+ *
+ * Single query: per-recipient counts are derived from the same result set, so
+ * there's no second round-trip and no insert-between-queries skew.
  */
 export async function getSpotlightKudos(): Promise<SpotlightNode[]> {
   const supabase = await createClient();
@@ -77,23 +46,24 @@ export async function getSpotlightKudos(): Promise<SpotlightNode[]> {
     return [];
   }
 
-  // Recipient → total active-kudo count (font-size weight), from the view.
-  const recipients = await getSpotlightRecipients();
-  const countById = new Map(
-    recipients.map((r) => [r.recipientProfileId, r.kudosCount]),
-  );
+  const rows = data ?? [];
 
-  return (data ?? []).map((row) => {
-    const raw = row.profiles as unknown;
-    const p = Array.isArray(raw)
-      ? (raw[0] as { display_name: string; avatar_url: string | null; dept_code: string | null } | undefined)
-      : (raw as { display_name: string; avatar_url: string | null; dept_code: string | null } | null | undefined);
+  // Per-recipient total (font-size weight), counted from this same result set.
+  const countById = new Map<string, number>();
+  for (const row of rows) {
+    const rid = row.recipient_profile_id as string;
+    countById.set(rid, (countById.get(rid) ?? 0) + 1);
+  }
+
+  return rows.map((row) => {
+    const rid = row.recipient_profile_id as string;
+    const p = firstProfile(row.profiles);
     return {
-      recipientProfileId: row.recipient_profile_id as string,
+      recipientProfileId: rid,
       displayName: p?.display_name ?? "",
       deptCode: p?.dept_code ?? null,
       avatarUrl: p?.avatar_url ?? null,
-      kudosCount: countById.get(row.recipient_profile_id as string) ?? 1,
+      kudosCount: countById.get(rid) ?? 1,
       latestKudoId: row.id as string,
       latestKudoAt: row.created_at as string,
     };
@@ -145,13 +115,9 @@ export async function getKudoEvent(kudoId: string): Promise<KudoEvent | null> {
     return null;
   }
 
-  const raw = data.profiles as unknown;
-  const p = Array.isArray(raw)
-    ? (raw[0] as { display_name: string } | undefined)
-    : (raw as { display_name: string } | null | undefined);
   return {
     kudoId: data.id as string,
-    recipientDisplayName: p?.display_name ?? "",
+    recipientDisplayName: firstProfile(data.profiles)?.display_name ?? "",
     createdAt: data.created_at as string,
   };
 }

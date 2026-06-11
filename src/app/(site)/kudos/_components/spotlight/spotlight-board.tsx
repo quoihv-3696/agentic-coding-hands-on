@@ -45,8 +45,11 @@ export function SpotlightBoard({
   const toggleFullscreen = useCallback(() => {
     const el = frameRef.current;
     if (!el) return;
-    if (document.fullscreenElement) void document.exitFullscreen?.();
-    else void el.requestFullscreen?.();
+    // Fullscreen API can reject (unsupported / iframe / Safari) — ignore gracefully.
+    const op = document.fullscreenElement
+      ? document.exitFullscreen?.()
+      : el.requestFullscreen?.();
+    void op?.catch(() => {});
   }, []);
 
   return (

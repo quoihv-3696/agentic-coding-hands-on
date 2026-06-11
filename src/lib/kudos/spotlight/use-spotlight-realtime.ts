@@ -46,6 +46,7 @@ export function useSpotlightRealtime(initial: {
     const supabase = createClient();
     const itemTimers = new Map<string, ReturnType<typeof setTimeout>>();
     let countDebounce: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
 
     function scheduleCountRefresh() {
       if (countDebounce) clearTimeout(countDebounce);
@@ -83,16 +84,21 @@ export function useSpotlightRealtime(initial: {
         { event: "INSERT", schema: "public", table: "kudos" },
         (payload) => {
           const id = (payload.new as { id?: string } | null)?.id;
-          if (typeof id === "string") void showInsert(id);
+          // Length cap: ids are UUIDs (36 chars); ignore anything implausible.
+          if (typeof id === "string" && id.length <= 64) void showInsert(id);
           scheduleCountRefresh();
         },
       );
 
     // Authenticate the socket first, else postgres_changes RLS treats us as anon
-    // and delivers nothing (kudos is `to authenticated using (true)`).
-    void applyRealtimeAuth(supabase).then(() => channel.subscribe());
+    // and delivers nothing (kudos is `to authenticated using (true)`). Guard against
+    // unmount during the await so we never subscribe to an already-torn-down channel.
+    void applyRealtimeAuth(supabase).then(() => {
+      if (!cancelled) channel.subscribe();
+    });
 
     return () => {
+      cancelled = true;
       if (countDebounce) clearTimeout(countDebounce);
       itemTimers.forEach((t) => clearTimeout(t));
       itemTimers.clear();

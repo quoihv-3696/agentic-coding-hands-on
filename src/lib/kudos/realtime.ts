@@ -28,10 +28,15 @@ export function subscribeBoard(onChange: () => void): () => void {
     );
 
   // Authenticate the socket first, else postgres_changes RLS treats us as anon
-  // and delivers nothing (tables are `to authenticated using (true)`).
-  void applyRealtimeAuth(supabase).then(() => channel.subscribe());
+  // and delivers nothing (tables are `to authenticated using (true)`). Guard against
+  // unsubscribe being called during the await (would leak a re-subscribed channel).
+  let cancelled = false;
+  void applyRealtimeAuth(supabase).then(() => {
+    if (!cancelled) channel.subscribe();
+  });
 
   return () => {
+    cancelled = true;
     void supabase.removeChannel(channel);
   };
 }

@@ -23,7 +23,16 @@ export function createClient() {
 export async function applyRealtimeAuth(
   supabase: ReturnType<typeof createClient>,
 ): Promise<void> {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
-  if (token) supabase.realtime.setAuth(token);
+  // getUser() validates the JWT (and refreshes a stale one) per project policy,
+  // so the token we then read from the session is fresh — avoids handing an
+  // expired token to the socket on mount. Ongoing rotations are auto-applied by
+  // supabase-js (TOKEN_REFRESHED → realtime.setAuth).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session?.access_token) supabase.realtime.setAuth(session.access_token);
 }
