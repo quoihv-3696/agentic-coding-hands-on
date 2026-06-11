@@ -41,14 +41,18 @@ export function ProfileHoverCard({
     null,
   );
 
-  async function handleOpen() {
-    openNow();
-    // Lazy-fetch once; keep the result cached in state.
+  // Lazy-fetch the summary once, cached in state. Called from BOTH hover and
+  // click/tap/keyboard opens so the card is never stuck on the skeleton.
+  async function ensureSummary() {
     if (summary === null) {
       setSummary("loading");
-      const result = await fetchProfileSummary(profileId);
-      setSummary(result);
+      setSummary(await fetchProfileSummary(profileId));
     }
+  }
+
+  function handleHoverOpen() {
+    openNow();
+    void ensureSummary();
   }
 
   function handleSendKudo() {
@@ -57,15 +61,18 @@ export function ProfileHoverCard({
   }
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        // Click/tap/keyboard opens go through onOpenChange, not onMouseEnter.
+        if (next) void ensureSummary();
+      }}
+    >
       <DropdownMenuTrigger
         asChild
-        onMouseEnter={handleOpen}
+        onMouseEnter={handleHoverOpen}
         onMouseLeave={scheduleClose}
-        // Prevent the default focus-ring jump when the menu closes.
-        onFocus={() => {
-          /* keyboard users click to open via native trigger */
-        }}
       >
         {/* asChild passes hover events down to the actual avatar element */}
         <span className="inline-flex">{children}</span>

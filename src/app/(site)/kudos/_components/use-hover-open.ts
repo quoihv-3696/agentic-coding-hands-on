@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Controlled open-state for a hover-driven dropdown (used by the profile + tier
@@ -10,6 +10,14 @@ import { useRef, useState } from "react";
 export function useHoverOpen(closeDelay = 150) {
   const [open, setOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear any pending close-timer on unmount so it can't fire setOpen on a
+  // removed component (feed re-renders / realtime refresh while hovering).
+  useEffect(() => {
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, []);
 
   function cancelClose() {
     if (timer.current) {
