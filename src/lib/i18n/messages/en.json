@@ -275,5 +275,29 @@
       "empty": "No data yet"
     },
     "stars": { "tooltip": "1★ = 10 Kudos · 2★ = 20 Kudos · 3★ = 50 Kudos" }
+  },
+  "kudosHoverCard": {
+    "unit": "Unit",
+    "received": "Kudos received",
+    "sent": "Kudos sent",
+    "send": "Send KUDO"
+  },
+  "kudosTierInfo": {
+    "new": {
+      "count": "1–4 people have sent you Kudos",
+      "desc": "The journey of spreading good has begun — your first thanks and recognitions have arrived."
+    },
+    "rising": {
+      "count": "5–9 people have sent you Kudos",
+      "desc": "You're growing in your teammates' hearts through kindness and dedication."
+    },
+    "super": {
+      "count": "10–20 people have sent you Kudos",
+      "desc": "You've become a trusted, well-loved icon — always ready to help and remembered by many teammates."
+    },
+    "legend": {
+      "count": "More than 20 people have sent you Kudos",
+      "desc": "You've become a legend — leaving an unforgettable mark on the team through your heart and actions."
+    }
   }
 }

@@ -18,6 +18,8 @@ import { ImageUploader, type ImageFile } from "./image-uploader";
 interface KudosFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Pre-fill the recipient field when the dialog opens. */
+  defaultRecipientId?: string;
 }
 
 interface FormState {
@@ -42,10 +44,14 @@ const INITIAL_STATE: FormState = {
   anonymousNickname: "",
 };
 
-export function KudosFormDialog({ open, onOpenChange }: KudosFormDialogProps) {
+export function KudosFormDialog({ open, onOpenChange, defaultRecipientId }: KudosFormDialogProps) {
   const { t } = useTranslations();
   const router = useRouter();
-  const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [form, setForm] = useState<FormState>(() =>
+    defaultRecipientId
+      ? { ...INITIAL_STATE, recipientProfileId: defaultRecipientId }
+      : INITIAL_STATE,
+  );
   const [errors, setErrors] = useState<
     Partial<Record<keyof FormState, string>>
   >({});
