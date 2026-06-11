@@ -13,10 +13,11 @@ import type {
   LeaderboardEntry,
   StatsSummary,
 } from "@/lib/kudos/types";
+import type { SpotlightNode } from "@/lib/kudos/spotlight/types";
 import { KudosFormDialog } from "@/app/(site)/_components/kudos-form/kudos-form-dialog";
 import { HeroBanner } from "./hero-banner";
 import { HighlightCarousel } from "./highlight-carousel";
-import { SpotlightPlaceholder } from "./spotlight-placeholder";
+import { SpotlightBoardClient } from "./spotlight/spotlight-board-client";
 import { KudoFeedInfinite } from "./kudo-feed-infinite";
 import { StatsSidebar } from "./stats-sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -29,6 +30,8 @@ interface LiveBoardProps {
   promotions: LeaderboardEntry[];
   gifts: LeaderboardEntry[];
   filters: HighlightFilters;
+  spotlightNodes: SpotlightNode[];
+  spotlightTotal: number;
 }
 
 /**
@@ -45,6 +48,8 @@ export function LiveBoard({
   promotions,
   gifts,
   filters,
+  spotlightNodes,
+  spotlightTotal,
 }: LiveBoardProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -103,7 +108,11 @@ export function LiveBoard({
         onViewDetails={(id) => router.push(`/kudos/${id}`)}
       />
 
-      <SpotlightPlaceholder />
+      {/* Spotlight Board — scattered recipient word-cloud with live count + transient ticker */}
+      <SpotlightBoardClient
+        nodes={spotlightNodes}
+        totalCount={spotlightTotal}
+      />
 
       <section className="mx-auto w-full max-w-6xl space-y-10 px-4 md:px-8">
         <header className="">

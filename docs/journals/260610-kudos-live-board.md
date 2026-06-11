@@ -32,7 +32,7 @@
   - `kudo-feed-infinite.tsx` — infinite scroll (keyset cursor, server action `loadFeedPage`).
   - `stats-sidebar.tsx` — Stats sidebar: kudos received/sent, hearts total, Secret Box stub (count = 0, coming-soon toast), two leaderboards.
   - `secret-box-stub.tsx` — coming-soon placeholder (Plan 2, no gift schema).
-  - `spotlight-placeholder.tsx` — Spotlight Board placeholder (Plan 3).
+  - `spotlight-placeholder.tsx` — Spotlight Board placeholder (superseded by Plan 3 / `260610-kudos-spotlight-board.md`).
   - `leaderboard.tsx` — rendered for both top-kudos and promotions leaderboards.
   - `star-badge.tsx` — reusable star count badge (`★ N`) placed alongside tier badge.
   - `live-board.tsx` — page shell; composes all sections; wires realtime subscription + filter URL state.
@@ -79,7 +79,7 @@ Filters drive both Highlight and All Kudos from a single URL searchParam source 
 
 5. **Special-day multiplier resolved at INSERT time, ICT timezone**: `current_date AT TIME ZONE 'Asia/Ho_Chi_Minh'` compared against `special_days`. The ×2 delta is stored in `hearts_awarded` so it survives even if the special-day window closes before an unlike.
 
-6. **Secret Box + Spotlight + Profile pages are stubs**: No gift schema, no spotlight data model, no `/profile/[id]` route. These are Plans 2 and 3. Links exist; profile pages may 404.
+6. **Secret Box + Profile pages are stubs**: No gift schema, no `/profile/[id]` route. These are Plans 2 and 4. Links exist; profile pages may 404. Spotlight Board shipped in Plan 3 (`260610-kudos-spotlight-board.md`).
 
 ## Gotchas
 
@@ -98,6 +98,7 @@ Filters drive both Highlight and All Kudos from a single URL searchParam source 
 - Fix M-02: validate `sp.hashtag`/`sp.department` against canonical lists in `page.tsx`.
 - Fix M-04: translate `copyLinkToast` in `vi.json`.
 - Plan 2: Secret Box gift economy (gift schema, box open flow, gift leaderboard).
-- Plan 3: Profile pages (`/profile/[id]`), Spotlight Board.
+- Plan 3: Spotlight Board — shipped (`260610-kudos-spotlight-board.md`).
+- Plan 4: Profile pages (`/profile/[id]`).
 - Add debounce on realtime `router.refresh()` before production traffic.
 - Add Playwright e2e: filter → carousel updates, heart toggle → count increments, anonymous kudo masking end-to-end.

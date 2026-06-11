@@ -82,7 +82,7 @@ export function HighlightCarousel({
   // Capped to the Figma frame width so ultra-wide screens (>1600px) render
   // identically to the design instead of destabilising embla's center align.
   return (
-    <section className="mx-auto w-full max-w-378 flex flex-col gap-10 bg-secondary">
+    <section className="mx-auto w-full max-w-6xl flex flex-col gap-10 bg-secondary">
       {/* ── Header (B.1) ─────────────────────────────────────────────── */}
       <div className="px-36 flex flex-col gap-10">
         {/* B.1 inner container */}

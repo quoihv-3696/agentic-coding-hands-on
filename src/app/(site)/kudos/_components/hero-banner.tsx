@@ -39,7 +39,7 @@ export function HeroBanner({ onOpen }: HeroBannerProps) {
         fill
         priority
         sizes="100vw"
-        className="object-cover object-[center_top]"
+        className="object-cover object-[center_center]"
       />
 
       {/*
@@ -51,13 +51,13 @@ export function HeroBanner({ onOpen }: HeroBannerProps) {
         className="pointer-events-none absolute inset-0 z-10"
         style={{
           background:
-            "linear-gradient(90deg, #00101A 30%, rgba(0,16,26,0.80) 55%, rgba(0,16,26,0) 75%)",
+            "linear-gradient(25deg, #00101A 20%, rgba(0,16,26,0.80) 35%, rgba(0,16,26,0) 75%)",
         }}
       />
 
       {/* Text + logo content column */}
       <div
-        className="relative z-20 flex flex-col items-start pt-45"
+        className="relative z-20 flex flex-col items-start pt-45 max-w-6xl mx-auto"
         style={{ paddingLeft: "144px", paddingRight: "144px" }}
       >
         {/* Title: Figma node "Hệ thống ghi nhận và cảm ơn" — 36px/700/44px lh, gold */}
@@ -97,7 +97,7 @@ export function HeroBanner({ onOpen }: HeroBannerProps) {
        * Figma: left-aligned at 144px, height 72px, above y=408 from top of KV.
        */}
       <div
-        className="absolute z-20 bottom-8 left-0 right-0"
+        className="absolute z-20 bottom-8 left-0 right-0 max-w-6xl mx-auto"
         style={{ paddingLeft: "144px", paddingRight: "144px" }}
       >
         <KudosInputPill
