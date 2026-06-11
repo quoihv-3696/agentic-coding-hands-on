@@ -177,6 +177,18 @@
       "mvp": "The MVP award honors the single most outstanding individual of the year — the face that represents the entire Sun* community. They have shown superior capability, enduring dedication, and far-reaching influence, leaving a strong mark on Sun*'s journey throughout the year. Beyond performance and work results, they are a source of inspiration that spreads — through their thinking, actions, and positive influence on the team. The MVP embodies the full qualities of an outstanding Sun* person while carrying a great responsibility: to become the model representing Sun*'s people and spirit, helping lead the team toward new heights."
     }
   },
+  "kudosSpotlight": {
+    "subtitle": "Sun* Annual Awards 2025",
+    "title": "SPOTLIGHT BOARD",
+    "search": "Search",
+    "countSuffix": "KUDOS",
+    "empty": "No data yet",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "reset": "Reset",
+    "expand": "Fullscreen",
+    "tickerSuffix": "just received a new Kudos"
+  },
   "kudosPage": { "title": "Sun* Kudos" },
   "kudosForm": {
     "heading": "Sending thanks and recognition to teammates.",

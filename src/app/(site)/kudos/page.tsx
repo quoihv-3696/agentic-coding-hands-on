@@ -4,6 +4,10 @@ import {
   getPromotionLeaderboard,
   getStats,
 } from "@/lib/kudos/stats";
+import {
+  getKudosTotalCount,
+  getSpotlightKudos,
+} from "@/lib/kudos/spotlight/queries";
 import { KUDO_HASHTAGS } from "@/lib/kudos/hashtags";
 import { DEPARTMENTS } from "@/lib/kudos/departments";
 import type { HighlightFilters } from "@/lib/kudos/types";
@@ -26,12 +30,22 @@ export default async function KudosPage({
     filters.department = sp.department;
   }
 
-  const [highlight, feed, stats, promotions, gifts] = await Promise.all([
+  const [
+    highlight,
+    feed,
+    stats,
+    promotions,
+    gifts,
+    spotlightNodes,
+    spotlightTotal,
+  ] = await Promise.all([
     getHighlight(filters),
     getFeed({ filters, limit: 10 }),
     getStats(),
     getPromotionLeaderboard(),
     getGiftLeaderboard(),
+    getSpotlightKudos(),
+    getKudosTotalCount(),
   ]);
 
   return (
@@ -43,6 +57,8 @@ export default async function KudosPage({
       promotions={promotions}
       gifts={gifts}
       filters={filters}
+      spotlightNodes={spotlightNodes}
+      spotlightTotal={spotlightTotal}
     />
   );
 }

@@ -177,6 +177,18 @@
       "mvp": "Giải thưởng MVP vinh danh cá nhân xuất sắc nhất năm – gương mặt tiêu biểu đại diện cho toàn bộ tập thể Sun*. Họ là người đã thể hiện năng lực vượt trội, tinh thần cống hiến bền bỉ, và tầm ảnh hưởng sâu rộng, để lại dấu ấn mạnh mẽ trong hành trình của Sun* suốt năm qua. Không chỉ nổi bật bởi hiệu suất và kết quả công việc, họ còn là nguồn cảm hứng lan tỏa – thông qua suy nghĩ, hành động và ảnh hưởng tích cực của mình đối với tập thể. MVP là người hội tụ đầy đủ phẩm chất của người Sun* ưu tú, đồng thời mang trên mình trọng trách lớn lao: trở thành hình mẫu đại diện cho con người và tinh thần Sun*, góp phần dẫn dắt tập thể vươn tới những đỉnh cao mới."
     }
   },
+  "kudosSpotlight": {
+    "subtitle": "Sun* Annual Awards 2025",
+    "title": "SPOTLIGHT BOARD",
+    "search": "Tìm kiếm",
+    "countSuffix": "KUDOS",
+    "empty": "Chưa có dữ liệu",
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "reset": "Đặt lại",
+    "expand": "Toàn màn hình",
+    "tickerSuffix": "đã nhận được một Kudos mới"
+  },
   "kudosPage": { "title": "Sun* Kudos" },
   "kudosForm": {
     "heading": "Gửi lời cám ơn và ghi nhận đến đồng đội",

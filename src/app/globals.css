@@ -12,6 +12,7 @@
   --container: #101417cc; /* semi-transparent dark surface */
   --container-2: #00070c; /* Details/Container 2 — dropdown surface */
   --error: #d4271d;
+  --error-2: #f17676; /* soft red — Spotlight search-match highlight */
   --border-detail: #998c5f; /* Details/Border — muted gold hairline */
 
   /* brand text tokens */
@@ -47,6 +48,7 @@
   --color-container: var(--container);
   --color-container-2: var(--container-2);
   --color-error: var(--error);
+  --color-error-2: var(--error-2);
   --color-border-detail: var(--border-detail);
   --color-primary-1: var(--primary-1);
   --color-primary-2: var(--primary-2);

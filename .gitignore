@@ -67,3 +67,6 @@ android/.gradle/
 android/build/
 # Playwright MCP transient artifacts
 .playwright-mcp/
+
+# Supabase Studio scratch snippets
+supabase/snippets/
