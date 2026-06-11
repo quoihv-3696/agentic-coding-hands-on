@@ -91,8 +91,11 @@ export function KudoCard({ row }: Props) {
         recipientAvatarUrl={row.recipientAvatarUrl}
         recipientDeptCode={row.recipientDeptCode}
         recipientHeroTier={row.recipientHeroTier}
+        senderHeroTier={row.senderHeroTier}
         senderStarCount={row.senderStarCount}
         recipientStarCount={row.recipientStarCount}
+        senderProfileId={row.senderProfileId}
+        recipientProfileId={row.recipientProfileId}
       />
 
       {/* Rectangle 14 — gold divider */}

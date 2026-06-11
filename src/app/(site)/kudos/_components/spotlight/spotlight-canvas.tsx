@@ -48,7 +48,7 @@ export function SpotlightCanvas({
   return (
     <div className="absolute inset-0">
       {/* Pan/zoom + expand controls — bottom-right overlay */}
-      <div className="absolute right-4 bottom-4 z-[60]">
+      <div className="absolute right-4 bottom-4 z-60">
         <SpotlightControls
           onZoomIn={() => transformRef.current?.zoomIn(0.3)}
           onZoomOut={() => transformRef.current?.zoomOut(0.3)}

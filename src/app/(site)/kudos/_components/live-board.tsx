@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { subscribeBoard } from "@/lib/kudos/realtime";
@@ -14,8 +14,8 @@ import type {
   StatsSummary,
 } from "@/lib/kudos/types";
 import type { SpotlightNode } from "@/lib/kudos/spotlight/types";
-import { KudosFormDialog } from "@/app/(site)/_components/kudos-form/kudos-form-dialog";
 import { HeroBanner } from "./hero-banner";
+import { KudosComposerProvider, useKudosComposer } from "./kudos-composer";
 import { HighlightCarousel } from "./highlight-carousel";
 import { SpotlightBoardClient } from "./spotlight/spotlight-board-client";
 import { KudoFeedInfinite } from "./kudo-feed-infinite";
@@ -35,12 +35,22 @@ interface LiveBoardProps {
 }
 
 /**
- * Client shell for the Kudos Live Board (spec MaZUn5xHXZ). Holds the filter state
- * in the URL (single source for BOTH Highlight + All Kudos), opens the existing
- * write/send dialog from the hero input pill, and subscribes to realtime changes —
- * re-fetching server data on any kudos/reaction change (preserves anonymous masking).
+ * Public entry point — wraps the board content in the single KudosComposerProvider
+ * so both the hero pill and any profile hover card share one dialog instance.
  */
-export function LiveBoard({
+export function LiveBoard(props: LiveBoardProps) {
+  return (
+    <KudosComposerProvider>
+      <LiveBoardInner {...props} />
+    </KudosComposerProvider>
+  );
+}
+
+/**
+ * Inner board — can safely call useKudosComposer() because it is rendered
+ * inside KudosComposerProvider above.
+ */
+function LiveBoardInner({
   highlight,
   feedInitial,
   feedCursor,
@@ -55,12 +65,11 @@ export function LiveBoard({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { t } = useTranslations();
-  const [formOpen, setFormOpen] = useState(false);
+  const composer = useKudosComposer();
 
   // Realtime: a change anywhere → re-render server data (router.refresh re-runs
   // the RSC fetch against the masked view; raw payloads are never rendered).
-  // Debounced so a burst of reactions coalesces into one refresh (avoids a
-  // thundering herd of 5-query refetches under event-day load).
+  // Debounced so a burst of reactions coalesces into one refresh.
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const unsubscribe = subscribeBoard(() => {
@@ -86,8 +95,6 @@ export function LiveBoard({
     [router, pathname, searchParams],
   );
 
-  // Remount carousel + feed when filters change → resets carousel to page 1 and
-  // re-seeds the infinite list from the new server page.
   const filterKey = `${filters.hashtag ?? ""}|${filters.department ?? ""}`;
   const loadMore = useCallback(
     (cursor: string) => loadFeedPage(cursor, filters),
@@ -96,7 +103,8 @@ export function LiveBoard({
 
   return (
     <main className="min-h-screen bg-secondary pb-16">
-      <HeroBanner onOpen={() => setFormOpen(true)} />
+      {/* Hero pill opens the composer with no preset recipient */}
+      <HeroBanner onOpen={() => composer.open()} />
 
       <HighlightCarousel
         key={`hl-${filterKey}`}
@@ -114,8 +122,8 @@ export function LiveBoard({
         totalCount={spotlightTotal}
       />
 
-      <section className="mx-auto w-full max-w-6xl space-y-10 px-4 md:px-8">
-        <header className="">
+      <section className="mx-auto w-full max-w-6xl space-y-10">
+        <header className="pt-12">
           <p className="font-semibold text-secondary-1 text-2xl tracking-widest">
             {t("kudosBoard.subtitle")}
           </p>
@@ -136,8 +144,6 @@ export function LiveBoard({
           <StatsSidebar stats={stats} promotions={promotions} gifts={gifts} />
         </div>
       </section>
-
-      <KudosFormDialog open={formOpen} onOpenChange={setFormOpen} />
     </main>
   );
 }

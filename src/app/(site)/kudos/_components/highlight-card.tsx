@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils";
 import type { HeroTier, KudoFeedRow } from "@/lib/kudos/types";
 import { toggleReaction } from "@/lib/kudos/actions";
 import { useTranslations } from "@/lib/i18n/i18n-context";
-import { TierBadge } from "./tier-badge";
+import { TierBadgeInfo } from "./tier-badge-info";
+import { ProfileHoverCard } from "./profile-hover-card";
 
 // Inline star icons — Phase 08's star-badge.tsx will replace.
 function StarRow({ count }: { count: number }) {
@@ -28,6 +29,8 @@ interface PersonInfoProps {
   starCount: number;
   anonymous?: boolean;
   anonymousNickname?: string | null;
+  /** When provided and non-anonymous, wraps the avatar in a ProfileHoverCard. */
+  profileId?: string | null;
 }
 
 function PersonInfo({
@@ -38,26 +41,35 @@ function PersonInfo({
   starCount,
   anonymous,
   anonymousNickname,
+  profileId,
 }: PersonInfoProps) {
   const displayName = anonymous ? (anonymousNickname ?? "Ẩn danh") : name;
 
+  const avatarEl = (
+    <div className="relative w-16 h-16 rounded-full border-2 border-white overflow-hidden flex-shrink-0 bg-gray-300">
+      {avatarUrl ? (
+        <Image
+          src={avatarUrl}
+          alt={displayName ?? ""}
+          fill
+          className="object-cover"
+        />
+      ) : (
+        <div className="w-full h-full bg-gray-400 flex items-center justify-center text-white text-lg font-bold">
+          {displayName?.charAt(0)?.toUpperCase() ?? "?"}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="flex flex-col items-center gap-3 w-[235px]">
-      {/* Avatar */}
-      <div className="relative w-16 h-16 rounded-full border-2 border-white overflow-hidden flex-shrink-0 bg-gray-300">
-        {avatarUrl ? (
-          <Image
-            src={avatarUrl}
-            alt={displayName ?? ""}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-400 flex items-center justify-center text-white text-lg font-bold">
-            {displayName?.charAt(0)?.toUpperCase() ?? "?"}
-          </div>
-        )}
-      </div>
+      {/* Avatar — wrapped in hover card for non-anonymous profiles */}
+      {profileId && !anonymous ? (
+        <ProfileHoverCard profileId={profileId}>{avatarEl}</ProfileHoverCard>
+      ) : (
+        avatarEl
+      )}
       {/* Name + meta */}
       <div className="flex flex-col items-center gap-0.5 w-full">
         <span className="text-secondary text-[16px] font-bold leading-6 text-center truncate w-full">
@@ -71,7 +83,7 @@ function PersonInfo({
           )}
           <div className="size-1 rounded-full bg-secondary-2"></div>
           <StarRow count={starCount} />
-          <TierBadge tier={heroTier} />
+          <TierBadgeInfo tier={heroTier} />
         </div>
       </div>
     </div>
@@ -164,6 +176,7 @@ export function HighlightCard({ row, onViewDetails }: HighlightCardProps) {
           starCount={row.senderStarCount ?? 0}
           anonymous={row.isAnonymous}
           anonymousNickname={row.anonymousNickname}
+          profileId={row.isAnonymous ? null : row.senderProfileId}
         />
         {/* Send icon in center */}
         <div className="flex items-center pt-4 shrink-0">
@@ -175,6 +188,7 @@ export function HighlightCard({ row, onViewDetails }: HighlightCardProps) {
           deptCode={row.recipientDeptCode}
           heroTier={row.recipientHeroTier}
           starCount={row.recipientStarCount}
+          profileId={row.recipientProfileId}
         />
       </div>
 

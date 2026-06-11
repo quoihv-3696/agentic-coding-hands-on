@@ -56,29 +56,19 @@ export function HeroBanner({ onOpen }: HeroBannerProps) {
       />
 
       {/* Text + logo content column */}
-      <div
-        className="relative z-20 flex flex-col items-start pt-45 max-w-6xl mx-auto"
-        style={{ paddingLeft: "144px", paddingRight: "144px" }}
-      >
-        {/* Title: Figma node "Hệ thống ghi nhận và cảm ơn" — 36px/700/44px lh, gold */}
+      <div className="relative z-20 flex flex-col items-start pt-45 max-w-6xl mx-auto">
         <h1
           className="font-bold"
           style={{
             fontSize: "36px",
             lineHeight: "44px",
             color: "#FFEA9E",
-            fontFamily: "Montserrat, var(--font-montserrat, sans-serif)",
             letterSpacing: "0px",
           }}
         >
           {t("kudosBoard.hero.title")}
         </h1>
 
-        {/*
-         * KUDOS logo: Figma MM_MEDIA_Kudos logo, 593×104px design size.
-         * Asset: src/assets/images/kudos/kudos-logo.svg (download from MoMorph media,
-         * nodeId 2940:13440). Falls back gracefully if missing (alt="KUDOS").
-         */}
         <div className="mt-2.5">
           <Image
             src={kudosLogo}
@@ -96,10 +86,7 @@ export function HeroBanner({ onOpen }: HeroBannerProps) {
        * Input pill row (spec A.1): positioned at y=408 in 512px tall banner.
        * Figma: left-aligned at 144px, height 72px, above y=408 from top of KV.
        */}
-      <div
-        className="absolute z-20 bottom-8 left-0 right-0 max-w-6xl mx-auto"
-        style={{ paddingLeft: "144px", paddingRight: "144px" }}
-      >
+      <div className="absolute z-20 bottom-8 left-0 right-0 max-w-6xl mx-auto">
         <KudosInputPill
           placeholder={t("kudosBoard.input.placeholder")}
           searchLabel={t("kudosBoard.searchSunner")}

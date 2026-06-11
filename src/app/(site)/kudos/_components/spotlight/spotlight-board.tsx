@@ -54,7 +54,7 @@ export function SpotlightBoard({
 
   return (
     <section
-      className="mx-auto w-full max-w-6xl px-4 md:px-8"
+      className="mx-auto w-full max-w-6xl "
       aria-label={t("kudosSpotlight.title")}
     >
       {/* ── B.6_Header Giải thưởng ── */}
@@ -63,7 +63,7 @@ export function SpotlightBoard({
           {t("kudosSpotlight.subtitle")}
         </p>
         <Separator className="my-2 w-12 border-primary" />
-        <h2 className="font-bold font-[Montserrat] text-[57px] text-primary uppercase leading-[64px] tracking-[-0.25px]">
+        <h2 className="font-bold font-[Montserrat] text-[57px] text-primary uppercase leading-16 tracking-[-0.25px]">
           {t("kudosSpotlight.title")}
         </h2>
       </div>
@@ -108,7 +108,7 @@ export function SpotlightBoard({
         {state === "empty" && <CanvasEmpty t={t} />}
 
         {/* B.7.3_Tìm kiếm sunner — top-left overlay */}
-        <div className="absolute top-5 left-5 z-[60]">
+        <div className="absolute top-5 left-5 z-60">
           <SpotlightSearch value={search.query} onChange={search.setQuery} />
         </div>
 
@@ -129,7 +129,7 @@ export function SpotlightBoard({
         </p>
 
         {/* Live ticker — bottom-left overlay */}
-        <div className="absolute bottom-3 left-5 z-[60] max-w-[60%]">
+        <div className="absolute bottom-3 left-5 z-60 max-w-[60%]">
           <SpotlightTicker events={recentEvents} />
         </div>
       </div>
