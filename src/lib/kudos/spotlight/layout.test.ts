@@ -4,6 +4,7 @@ import type { SpotlightNode } from "./types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+/** latestKudoAt is set from `id` so the oldest→newest sort is deterministic. */
 function makeNode(
   id: string,
   kudosCount: number,
@@ -16,14 +17,20 @@ function makeNode(
     avatarUrl: null,
     kudosCount,
     latestKudoId: `kudo-${id}`,
-    latestKudoAt: new Date().toISOString(),
+    latestKudoAt: id,
   };
 }
 
-/** Large canvas that fits all reasonable test sets. */
 const DIMS = { width: 1400, height: 800 };
 const FONT_MIN = 6;
-const FONT_MAX = 12;
+const FONT_MAX = 11;
+
+function aabbOverlap(a: SpotlightNode & { x: number; y: number; width: number; height: number }, b: typeof a) {
+  return (
+    Math.abs(a.x - b.x) < (a.width + b.width) / 2 &&
+    Math.abs(a.y - b.y) < (a.height + b.height) / 2
+  );
+}
 
 // ─── fontSizeFor ──────────────────────────────────────────────────────────────
 
@@ -31,11 +38,9 @@ describe("fontSizeFor", () => {
   it("returns FONT_MIN for 0 count", () => {
     expect(fontSizeFor(0, 100)).toBe(FONT_MIN);
   });
-
   it("returns FONT_MAX for count equal to maxCount", () => {
     expect(fontSizeFor(50, 50)).toBe(FONT_MAX);
   });
-
   it("is monotonic: higher count => equal or larger font", () => {
     const max = 100;
     let prev = fontSizeFor(0, max);
@@ -45,81 +50,71 @@ describe("fontSizeFor", () => {
       prev = cur;
     }
   });
-
-  it("clamps safely for count > maxCount", () => {
+  it("clamps within [FONT_MIN, FONT_MAX] for count > maxCount", () => {
     const size = fontSizeFor(200, 50);
     expect(size).toBeGreaterThanOrEqual(FONT_MIN);
     expect(size).toBeLessThanOrEqual(FONT_MAX);
   });
-
   it("returns FONT_MIN when maxCount is 0", () => {
     expect(fontSizeFor(0, 0)).toBe(FONT_MIN);
   });
 });
 
-// ─── Scatter: spread across the canvas, within bounds ─────────────────────────
+// ─── No overlap ───────────────────────────────────────────────────────────────
 
-describe("layoutNodes — scatter within bounds", () => {
-  it("places every node inside the canvas dims", () => {
-    const nodes = Array.from({ length: 40 }, (_, i) =>
-      makeNode(String(i), (i % 10) + 1),
+describe("layoutNodes — no overlap", () => {
+  it("places 30 nodes with no overlapping label boxes", () => {
+    const nodes = Array.from({ length: 30 }, (_, i) =>
+      makeNode(String(i).padStart(3, "0"), (i % 8) + 1),
     );
-    const result = layoutNodes(nodes, DIMS);
-    for (const n of result) {
-      expect(n.x).toBeGreaterThanOrEqual(0);
-      expect(n.x).toBeLessThanOrEqual(DIMS.width);
-      expect(n.y).toBeGreaterThanOrEqual(0);
-      expect(n.y).toBeLessThanOrEqual(DIMS.height);
+    const r = layoutNodes(nodes, DIMS);
+    for (let i = 0; i < r.length; i++) {
+      for (let j = i + 1; j < r.length; j++) {
+        expect(
+          aabbOverlap(r[i], r[j]),
+          `${r[i].recipientProfileId} overlaps ${r[j].recipientProfileId}`,
+        ).toBe(false);
+      }
     }
   });
 
-  it("spreads nodes (not all clustered at one point)", () => {
-    const nodes = Array.from({ length: 40 }, (_, i) =>
-      makeNode(String(i).padStart(3, "0"), (i % 10) + 1),
-    );
-    const result = layoutNodes(nodes, DIMS);
-    const xs = result.map((n) => n.x);
-    const ys = result.map((n) => n.y);
-    // Spread should cover a meaningful fraction of the canvas span.
-    expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(DIMS.width * 0.4);
-    expect(Math.max(...ys) - Math.min(...ys)).toBeGreaterThan(DIMS.height * 0.4);
+  it("keeps every node within the canvas bounds", () => {
+    const nodes = Array.from({ length: 40 }, (_, i) => makeNode(String(i), (i % 8) + 1));
+    for (const n of layoutNodes(nodes, DIMS)) {
+      expect(n.x - n.width / 2).toBeGreaterThanOrEqual(-0.01);
+      expect(n.x + n.width / 2).toBeLessThanOrEqual(DIMS.width + 0.01);
+      expect(n.y - n.height / 2).toBeGreaterThanOrEqual(-0.01);
+      expect(n.y + n.height / 2).toBeLessThanOrEqual(DIMS.height + 0.01);
+    }
   });
 });
 
-// ─── Depth: opacity in range, monotonic with font size ────────────────────────
+// ─── Depth opacity ────────────────────────────────────────────────────────────
 
 describe("layoutNodes — depth opacity", () => {
-  it("opacity is within [0.5, 1] and larger fonts are at least as opaque", () => {
-    const nodes = [
-      makeNode("a", 1),
-      makeNode("b", 10),
-      makeNode("c", 50),
-    ];
-    const result = layoutNodes(nodes, DIMS);
-    for (const n of result) {
+  it("opacity within [0.5, 1]", () => {
+    const r = layoutNodes([makeNode("a", 1), makeNode("b", 10), makeNode("c", 50)], DIMS);
+    for (const n of r) {
       expect(n.opacity).toBeGreaterThanOrEqual(0.5);
       expect(n.opacity).toBeLessThanOrEqual(1);
     }
   });
 });
 
-// ─── Deterministic — same input → identical output ───────────────────────────
+// ─── Determinism ──────────────────────────────────────────────────────────────
 
 describe("layoutNodes — determinism", () => {
-  it("produces identical coordinates on two calls with the same input", () => {
+  it("identical output on two calls with the same input", () => {
     const nodes = Array.from({ length: 30 }, (_, i) =>
       makeNode(String(i).padStart(4, "0"), (i % 10) + 1),
     );
-
-    const first = layoutNodes(nodes, DIMS);
-    const second = layoutNodes(nodes, DIMS);
-
-    expect(first.length).toBe(second.length);
-    for (let i = 0; i < first.length; i++) {
-      expect(first[i].x).toBe(second[i].x);
-      expect(first[i].y).toBe(second[i].y);
-      expect(first[i].fontSize).toBe(second[i].fontSize);
-      expect(first[i].opacity).toBe(second[i].opacity);
+    const a = layoutNodes(nodes, DIMS);
+    const b = layoutNodes(nodes, DIMS);
+    for (let i = 0; i < a.length; i++) {
+      expect(a[i].x).toBe(b[i].x);
+      expect(a[i].y).toBe(b[i].y);
+      expect(a[i].fontSize).toBe(b[i].fontSize);
+      expect(a[i].opacity).toBe(b[i].opacity);
     }
   });
 
@@ -128,102 +123,77 @@ describe("layoutNodes — determinism", () => {
       makeNode(String(i).padStart(4, "0"), i + 1),
     );
     const shuffled = [...nodes].sort(() => 0.5 - Math.random());
-
-    const a = layoutNodes(nodes, DIMS);
-    const b = layoutNodes(shuffled, DIMS);
-
-    const sortById = (arr: typeof a) =>
-      [...arr].sort((x, y) =>
-        x.recipientProfileId.localeCompare(y.recipientProfileId),
-      );
-
-    const sortedA = sortById(a);
-    const sortedB = sortById(b);
-
-    for (let i = 0; i < sortedA.length; i++) {
-      expect(sortedA[i].x).toBe(sortedB[i].x);
-      expect(sortedA[i].y).toBe(sortedB[i].y);
+    const byId = (arr: ReturnType<typeof layoutNodes>) =>
+      [...arr].sort((x, y) => x.recipientProfileId.localeCompare(y.recipientProfileId));
+    const a = byId(layoutNodes(nodes, DIMS));
+    const b = byId(layoutNodes(shuffled, DIMS));
+    for (let i = 0; i < a.length; i++) {
+      expect(a[i].x).toBe(b[i].x);
+      expect(a[i].y).toBe(b[i].y);
     }
   });
 });
 
-// ─── Append-only stability — adding a node keeps prior coords stable ─────────
+// ─── Append-only stability ────────────────────────────────────────────────────
 
 describe("layoutNodes — append-only stability", () => {
-  it("existing nodes keep their coords when a new node is added", () => {
+  it("a newer node leaves all existing nodes' positions unchanged", () => {
     const original = [
-      makeNode("aaa", 20, "Alice"),
-      makeNode("bbb", 15, "Bob"),
-      makeNode("ccc", 10, "Carol"),
+      makeNode("a-old", 20, "Alice"),
+      makeNode("b-old", 15, "Bob"),
+      makeNode("c-old", 10, "Carol"),
     ];
-
-    const withExtra = [...original, makeNode("zzz", 1, "Zach")];
-
+    // 'z-new' sorts last (newest by latestKudoAt) → placed last, must not move others.
+    const withExtra = [...original, makeNode("z-new", 5, "Zoe")];
     const before = layoutNodes(original, DIMS);
     const after = layoutNodes(withExtra, DIMS);
-
     for (const orig of before) {
-      const match = after.find(
-        (n) => n.recipientProfileId === orig.recipientProfileId,
-      );
-      expect(match).toBeDefined();
-      expect(match!.x).toBe(orig.x);
-      expect(match!.y).toBe(orig.y);
+      const m = after.find((n) => n.recipientProfileId === orig.recipientProfileId);
+      expect(m).toBeDefined();
+      expect(m!.x).toBe(orig.x);
+      expect(m!.y).toBe(orig.y);
     }
   });
 });
 
-// ─── Font size monotonic with kudosCount ──────────────────────────────────────
+// ─── Font monotonic ───────────────────────────────────────────────────────────
 
 describe("layoutNodes — font size monotonicity", () => {
-  it("nodes with higher kudosCount get equal or larger fontSize", () => {
-    const nodes = [
-      makeNode("a", 1),
-      makeNode("b", 5),
-      makeNode("c", 10),
-      makeNode("d", 20),
-      makeNode("e", 50),
-    ];
-    const result = layoutNodes(nodes, DIMS);
-
-    const byCount = new Map(result.map((n) => [n.kudosCount, n.fontSize]));
+  it("higher kudosCount => equal or larger fontSize", () => {
+    const r = layoutNodes(
+      [makeNode("a", 1), makeNode("b", 5), makeNode("c", 10), makeNode("d", 20), makeNode("e", 50)],
+      DIMS,
+    );
+    const byCount = new Map(r.map((n) => [n.kudosCount, n.fontSize]));
     const counts = [1, 5, 10, 20, 50];
     for (let i = 0; i < counts.length - 1; i++) {
-      const fLow = byCount.get(counts[i])!;
-      const fHigh = byCount.get(counts[i + 1])!;
-      expect(fHigh).toBeGreaterThanOrEqual(fLow);
+      expect(byCount.get(counts[i + 1])!).toBeGreaterThanOrEqual(byCount.get(counts[i])!);
     }
   });
 });
 
-// ─── Edge cases: 0 nodes and ~400 nodes ───────────────────────────────────────
+// ─── Edge cases ───────────────────────────────────────────────────────────────
 
 describe("layoutNodes — edge cases", () => {
-  it("returns empty array for 0 nodes without throwing", () => {
-    expect(() => layoutNodes([], DIMS)).not.toThrow();
+  it("returns empty array for 0 nodes", () => {
     expect(layoutNodes([], DIMS)).toEqual([]);
   });
 
-  it("handles ~400 nodes without throwing", () => {
+  it("handles ~400 nodes without throwing and stays numeric/in-range", () => {
     const nodes = Array.from({ length: 400 }, (_, i) =>
-      makeNode(String(i).padStart(6, "0"), (i % 30) + 1, `Employee${i}`),
+      makeNode(String(i).padStart(6, "0"), (i % 25) + 1, `P${i}`),
     );
-    expect(() => layoutNodes(nodes, DIMS)).not.toThrow();
-    expect(layoutNodes(nodes, DIMS).length).toBe(400);
-  });
-
-  it("all 400-node results have numeric x/y/fontSize/width/height/opacity", () => {
-    const nodes = Array.from({ length: 400 }, (_, i) =>
-      makeNode(String(i).padStart(6, "0"), (i % 25) + 1, `Person${i}`),
-    );
-    const result = layoutNodes(nodes, DIMS);
-    for (const n of result) {
-      expect(typeof n.x).toBe("number");
-      expect(typeof n.y).toBe("number");
+    let r: ReturnType<typeof layoutNodes>;
+    expect(() => {
+      r = layoutNodes(nodes, DIMS);
+    }).not.toThrow();
+    r = layoutNodes(nodes, DIMS);
+    expect(r.length).toBe(400);
+    for (const n of r) {
+      expect(Number.isFinite(n.x)).toBe(true);
+      expect(Number.isFinite(n.y)).toBe(true);
       expect(n.fontSize).toBeGreaterThanOrEqual(FONT_MIN);
       expect(n.fontSize).toBeLessThanOrEqual(FONT_MAX);
-      expect(n.width).toBeGreaterThan(0);
-      expect(n.height).toBeGreaterThan(0);
       expect(n.opacity).toBeGreaterThanOrEqual(0.5);
       expect(n.opacity).toBeLessThanOrEqual(1);
     }

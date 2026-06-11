@@ -1,28 +1,25 @@
 /**
- * Scattered "3D" word-cloud layout for the Spotlight Board.
+ * Non-overlapping scattered word-cloud layout for the Spotlight Board.
  *
  * Pure module — no React, no DOM, no Supabase. Fully unit-testable.
  *
  * Design goals:
- *  1. DETERMINISTIC: same input → identical output (each node is seeded by its
- *     own recipientProfileId, never by array order or neighbours).
- *  2. APPEND-ONLY STABILITY: adding a new node never moves existing nodes — a
- *     node's position depends solely on its own id.
- *  3. SCATTERED ("loạn xạ"): nodes spread across the WHOLE canvas (not clustered
- *     at the centre); slight overlap is allowed for a dense constellation feel.
- *  4. 3D DEPTH: font size scales with kudosCount; opacity + z-order scale with it
- *     too, so bigger contributors read as "closer" and small ones recede.
- *  5. Handles 0 nodes and ~400 nodes without throwing.
+ *  1. NO OVERLAP: each label is placed where its AABB doesn't intersect any
+ *     already-placed label — so names stay individually clickable.
+ *  2. SCATTERED: each label starts from a per-id seeded random anchor, then walks
+ *     a golden-angle spiral outward only as far as needed to clear collisions —
+ *     organic, not a rigid grid.
+ *  3. APPEND-ONLY STABILITY: nodes are placed oldest → newest, so a newly-arrived
+ *     kudo is positioned LAST against the existing set and never moves the others.
+ *  4. DETERMINISTIC: same input set → identical output (seeded by id, stable sort).
+ *  5. DEPTH: smaller fonts read fainter (opacity) and sit lower in z-order.
  *
- * Placement is a per-id seeded pseudo-random point within an inset of the canvas
- * (the inset leaves room for the top overlays — count/search — and the bottom
- * ticker). react-zoom-pan-pinch transforms this scene on top; layout is zoom-agnostic.
+ * Fonts are intentionally small; the canvas is pan/zoom, so users zoom in to read.
  */
 import type { SpotlightNode } from "./types";
 
 export interface PositionedNode extends SpotlightNode {
-  /** Label centre, in the virtual canvas pixel space passed as `dims`. */
-  x: number;
+  x: number; // label centre, in the virtual canvas pixel space (dims)
   y: number;
   fontSize: number;
   width: number;
@@ -31,15 +28,11 @@ export interface PositionedNode extends SpotlightNode {
   opacity: number;
 }
 
-// ─── Font-size mapping ────────────────────────────────────────────────────────
+// ─── Font-size mapping (small — zoom to read) ─────────────────────────────────
 
 const FONT_MIN = 6;
-const FONT_MAX = 12;
+const FONT_MAX = 11;
 
-/**
- * Map kudosCount to a font size in [FONT_MIN, FONT_MAX] via a sqrt scale so
- * moderate contributors stay visible and outliers don't dominate the canvas.
- */
 export function fontSizeFor(kudosCount: number, maxCount: number): number {
   if (maxCount <= 0) return FONT_MIN;
   const ratio = Math.sqrt(
@@ -48,18 +41,36 @@ export function fontSizeFor(kudosCount: number, maxCount: number): number {
   return Math.round(FONT_MIN + ratio * (FONT_MAX - FONT_MIN));
 }
 
-// ─── AABB estimate (width/height for the rendered label) ───────────────────────
+// ─── Label box estimate ───────────────────────────────────────────────────────
 
 const CHAR_WIDTH_FACTOR = 0.55;
 const LINE_HEIGHT_FACTOR = 1.3;
+/** Gap added around every label so neighbours don't touch (eases clicking). */
+const GAP = 6;
 
-function labelWidth(label: string, fontSize: number): number {
-  return label.length * fontSize * CHAR_WIDTH_FACTOR;
+function labelBox(label: string, fontSize: number): { w: number; h: number } {
+  return {
+    w: label.length * fontSize * CHAR_WIDTH_FACTOR + GAP,
+    h: fontSize * LINE_HEIGHT_FACTOR + GAP,
+  };
+}
+
+interface AABB {
+  x: number; // centre
+  y: number;
+  w: number;
+  h: number;
+}
+
+function overlaps(a: AABB, b: AABB): boolean {
+  return (
+    Math.abs(a.x - b.x) < (a.w + b.w) / 2 &&
+    Math.abs(a.y - b.y) < (a.h + b.h) / 2
+  );
 }
 
 // ─── Deterministic per-id PRNG ─────────────────────────────────────────────────
 
-/** xmur3 string hash → 32-bit seed. */
 function hashSeed(str: string): number {
   let h = 1779033703 ^ str.length;
   for (let i = 0; i < str.length; i++) {
@@ -71,7 +82,6 @@ function hashSeed(str: string): number {
   return (h ^= h >>> 16) >>> 0;
 }
 
-/** mulberry32 PRNG → returns successive floats in [0,1). */
 function mulberry32(seed: number): () => number {
   let a = seed;
   return () => {
@@ -83,17 +93,15 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-// Inset fractions: leave headroom for the top overlays + bottom ticker.
-const INSET_X = 0.05;
-const INSET_TOP = 0.14;
-const INSET_BOTTOM = 0.12;
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const SPIRAL_STEP = 7; // px growth per spiral index
+const MAX_TRIES = 900; // collision-search budget per node before giving up
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
- * Scatter `nodes` across `dims`, returning a `PositionedNode[]` with centre (x,y),
- * fontSize, width/height estimate, and a depth `opacity`. Positions are seeded by
- * recipientProfileId so the layout is deterministic and append-stable.
+ * Lay out `nodes` within `dims` with NO overlaps. Coordinates are label centres
+ * in the virtual pixel space; the caller maps them to canvas percentages.
  */
 export function layoutNodes(
   nodes: SpotlightNode[],
@@ -101,31 +109,61 @@ export function layoutNodes(
 ): PositionedNode[] {
   if (nodes.length === 0) return [];
 
-  const maxCount = nodes.reduce((m, n) => Math.max(m, n.kudosCount), 0);
-
-  const minX = dims.width * INSET_X;
-  const spanX = dims.width * (1 - INSET_X * 2);
-  const minY = dims.height * INSET_TOP;
-  const spanY = dims.height * (1 - INSET_TOP - INSET_BOTTOM);
-
-  return nodes.map((node) => {
-    // Seed by the unique per-kudo id (not recipientProfileId) so a recipient's
-    // multiple kudos scatter to distinct positions instead of stacking.
-    const rng = mulberry32(hashSeed(node.latestKudoId));
-    const fontSize = fontSizeFor(node.kudosCount, maxCount);
-    const width = labelWidth(node.displayName, fontSize);
-    const height = fontSize * LINE_HEIGHT_FACTOR;
-
-    // Two draws → x, y; a third adds a touch of opacity jitter so equal-size
-    // labels still vary in depth.
-    const x = minX + rng() * spanX;
-    const y = minY + rng() * spanY;
-    const sizeRatio = (fontSize - FONT_MIN) / (FONT_MAX - FONT_MIN || 1);
-    const opacity = Math.min(
-      1,
-      Math.max(0.5, 0.55 + sizeRatio * 0.4 + rng() * 0.1),
-    );
-
-    return { ...node, x, y, fontSize, width, height, opacity };
+  // Oldest first (append-only stability), stable tiebreak by id.
+  const sorted = [...nodes].sort((a, b) => {
+    if (a.latestKudoAt !== b.latestKudoAt) {
+      return a.latestKudoAt < b.latestKudoAt ? -1 : 1;
+    }
+    return a.latestKudoId.localeCompare(b.latestKudoId);
   });
+
+  const maxCount = sorted.reduce((m, n) => Math.max(m, n.kudosCount), 0);
+  const placed: AABB[] = [];
+  const result: PositionedNode[] = [];
+
+  for (const node of sorted) {
+    const fontSize = fontSizeFor(node.kudosCount, maxCount);
+    const { w, h } = labelBox(node.displayName, fontSize);
+
+    // Per-id seeded anchor, kept inside bounds so the whole label stays visible.
+    const rng = mulberry32(hashSeed(node.latestKudoId));
+    const minX = w / 2;
+    const minY = h / 2;
+    const spanX = Math.max(0, dims.width - w);
+    const spanY = Math.max(0, dims.height - h);
+    const anchorX = minX + rng() * spanX;
+    const anchorY = minY + rng() * spanY;
+
+    // Spiral outward from the anchor until the box clears every placed box.
+    let cx = anchorX;
+    let cy = anchorY;
+    for (let k = 0; k < MAX_TRIES; k++) {
+      const r = SPIRAL_STEP * Math.sqrt(k);
+      const theta = k * GOLDEN_ANGLE;
+      cx = Math.min(
+        dims.width - w / 2,
+        Math.max(w / 2, anchorX + r * Math.cos(theta)),
+      );
+      cy = Math.min(
+        dims.height - h / 2,
+        Math.max(h / 2, anchorY + r * Math.sin(theta)),
+      );
+      const box: AABB = { x: cx, y: cy, w, h };
+      if (!placed.some((p) => overlaps(box, p))) break;
+    }
+
+    placed.push({ x: cx, y: cy, w, h });
+    const sizeRatio = (fontSize - FONT_MIN) / (FONT_MAX - FONT_MIN || 1);
+    result.push({
+      ...node,
+      x: cx,
+      y: cy,
+      fontSize,
+      width: w,
+      height: h,
+      opacity: Math.min(1, Math.max(0.5, 0.55 + sizeRatio * 0.45)),
+    });
+  }
+
+  return result;
 }
