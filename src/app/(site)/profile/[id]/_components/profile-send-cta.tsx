@@ -21,7 +21,8 @@ export function ProfileSendCta({
 }: ProfileSendCtaProps) {
   const { t } = useTranslations();
   const composer = useKudosComposer();
-  const label = t("profile.sendCta").replace("{name}", recipientName);
+  // Function replacement avoids $-pattern expansion if a name contains "$".
+  const label = t("profile.sendCta").replace("{name}", () => recipientName);
 
   return (
     <Button

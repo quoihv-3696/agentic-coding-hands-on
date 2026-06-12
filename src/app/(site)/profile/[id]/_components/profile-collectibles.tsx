@@ -33,7 +33,7 @@ export function ProfileCollectibles({ displayName, isOwner }: ProfileCollectible
   const { t } = useTranslations();
   const caption = isOwner
     ? t("profile.collectionTitleOwn")
-    : t("profile.collectionTitleOther").replace("{name}", displayName);
+    : t("profile.collectionTitleOther").replace("{name}", () => displayName);
 
   return (
     <section className="flex flex-col items-center gap-4">
