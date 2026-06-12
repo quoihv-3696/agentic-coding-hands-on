@@ -4,8 +4,8 @@ import { createContext, useContext, useState } from "react";
 import { KudosFormDialog } from "@/app/(site)/_components/kudos-form/kudos-form-dialog";
 
 interface ComposerContextValue {
-  /** Open the form, optionally pre-filling a recipient. */
-  open: (recipientId?: string) => void;
+  /** Open the form, optionally pre-filling a recipient (id + display name). */
+  open: (recipientId?: string, recipientName?: string) => void;
 }
 
 const ComposerContext = createContext<ComposerContextValue | null>(null);
@@ -29,12 +29,14 @@ interface Props {
 export function KudosComposerProvider({ children }: Props) {
   const [formOpen, setFormOpen] = useState(false);
   const [recipientId, setRecipientId] = useState<string | undefined>(undefined);
+  const [recipientName, setRecipientName] = useState<string | undefined>(undefined);
   // Incrementing key forces KudosFormDialog to remount on each open so the
-  // lazy useState initializer picks up the new defaultRecipientId cleanly.
+  // lazy useState initializer picks up the new defaultRecipient* props cleanly.
   const [openKey, setOpenKey] = useState(0);
 
-  function open(id?: string) {
+  function open(id?: string, name?: string) {
     setRecipientId(id);
+    setRecipientName(name);
     setOpenKey((k) => k + 1);
     setFormOpen(true);
   }
@@ -49,6 +51,7 @@ export function KudosComposerProvider({ children }: Props) {
           if (!v) setFormOpen(false);
         }}
         defaultRecipientId={recipientId}
+        defaultRecipientName={recipientName}
       />
     </ComposerContext.Provider>
   );

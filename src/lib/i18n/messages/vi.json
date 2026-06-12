@@ -1,5 +1,9 @@
 {
-  "language": { "vn": "VN", "en": "EN", "switch": "Chuyển đổi ngôn ngữ" },
+  "language": {
+    "vn": "VN",
+    "en": "EN",
+    "switch": "Chuyển đổi ngôn ngữ"
+  },
   "login": {
     "welcomeLine1": "Bắt đầu hành trình của bạn cùng SAA 2025.",
     "welcomeLine2": "Đăng nhập để khám phá!",
@@ -161,12 +165,25 @@
       "perAward": "cho mỗi giải thưởng",
       "forIndividual": "cho giải cá nhân",
       "forTeam": "cho giải tập thể",
-      "topTalent": { "value": "7.000.000 VNĐ" },
-      "topProject": { "value": "15.000.000 VNĐ" },
-      "topProjectLeader": { "value": "7.000.000 VNĐ" },
-      "bestManager": { "value": "10.000.000 VNĐ" },
-      "signature": { "individual": "5.000.000 VNĐ", "team": "8.000.000 VNĐ" },
-      "mvp": { "value": "15.000.000 VNĐ" }
+      "topTalent": {
+        "value": "7.000.000 VNĐ"
+      },
+      "topProject": {
+        "value": "15.000.000 VNĐ"
+      },
+      "topProjectLeader": {
+        "value": "7.000.000 VNĐ"
+      },
+      "bestManager": {
+        "value": "10.000.000 VNĐ"
+      },
+      "signature": {
+        "individual": "5.000.000 VNĐ",
+        "team": "8.000.000 VNĐ"
+      },
+      "mvp": {
+        "value": "15.000.000 VNĐ"
+      }
     },
     "desc": {
       "topTalent": "Giải thưởng Top Talent vinh danh những cá nhân xuất sắc toàn diện – những người không ngừng khẳng định năng lực chuyên môn vững vàng, hiệu suất công việc vượt trội, luôn mang lại giá trị vượt kỳ vọng, được đánh giá cao bởi khách hàng và đồng đội. Với tinh thần sẵn sàng nhận mọi nhiệm vụ tổ chức giao phó, họ luôn là nguồn cảm hứng, thúc đẩy động lực và tạo ảnh hưởng tích cực đến cả tập thể.",
@@ -189,7 +206,9 @@
     "expand": "Toàn màn hình",
     "tickerSuffix": "đã nhận được một Kudos mới"
   },
-  "kudosPage": { "title": "Sun* Kudos" },
+  "kudosPage": {
+    "title": "Sun* Kudos"
+  },
   "kudosForm": {
     "heading": "Gửi lời cám ơn và ghi nhận đến đồng đội",
     "recipientLabel": "Người nhận",
@@ -247,8 +266,12 @@
   },
   "kudosBoard": {
     "subtitle": "Sun* Annual Awards 2025",
-    "hero": { "title": "Hệ thống ghi nhận lời cảm ơn" },
-    "input": { "placeholder": "Hôm nay, bạn muốn gửi lời cảm ơn và ghi nhận đến ai?" },
+    "hero": {
+      "title": "Hệ thống ghi nhận lời cảm ơn"
+    },
+    "input": {
+      "placeholder": "Hôm nay, bạn muốn gửi lời cảm ơn và ghi nhận đến ai?"
+    },
     "searchSunner": "Tìm kiếm profile Sunner",
     "highlight": {
       "title": "HIGHLIGHT KUDOS",
@@ -256,7 +279,10 @@
       "filterDept": "Phòng ban",
       "empty": "Hiện tại chưa có Kudos nào."
     },
-    "allKudos": { "title": "ALL KUDOS", "empty": "Hiện tại chưa có Kudos nào." },
+    "allKudos": {
+      "title": "ALL KUDOS",
+      "empty": "Hiện tại chưa có Kudos nào."
+    },
     "viewDetails": "Xem chi tiết",
     "copyLink": "Copy Link",
     "copyLinkToast": "Link copied — ready to share!",
@@ -268,13 +294,17 @@
       "boxUnopened": "Số Secret Box chưa mở",
       "openGift": "Mở Secret Box"
     },
-    "secretBox": { "comingSoon": "Tính năng Secret Box sẽ sớm ra mắt!" },
+    "secretBox": {
+      "comingSoon": "Tính năng Secret Box sẽ sớm ra mắt!"
+    },
     "leaderboard": {
       "promotions": "10 SUNNER CÓ SỰ THĂNG HẠNG MỚI NHẤT",
       "gifts": "10 SUNNER NHẬN QUÀ MỚI NHẤT",
       "empty": "Chưa có dữ liệu"
     },
-    "stars": { "tooltip": "1★ = 10 Kudos · 2★ = 20 Kudos · 3★ = 50 Kudos" }
+    "stars": {
+      "tooltip": "1★ = 10 Kudos · 2★ = 20 Kudos · 3★ = 50 Kudos"
+    }
   },
   "kudosHoverCard": {
     "unit": "Tên đơn vị",
@@ -299,5 +329,25 @@
       "count": "Có hơn 20 người gửi Kudos cho bạn",
       "desc": "Bạn đã trở thành huyền thoại – người để lại dấu ấn khó quên trong tập thể bằng trái tim và hành động của mình."
     }
+  },
+  "profile": {
+    "collectionTitleOwn": "Bộ sưu tập icon của tôi",
+    "collectionTitleOther": "Bộ sưu tập icon của {name}",
+    "stats": {
+      "received": "Số Kudos bạn nhận được",
+      "sent": "Số Kudos bạn đã gửi",
+      "hearts": "Số tim bạn nhận được",
+      "boxOpened": "Số Secret Box bạn đã mở",
+      "boxUnopened": "Số Secret Box chưa mở"
+    },
+    "openSecretBox": "Mở Secret Box",
+    "awardsTitle": "Sun* Annual Awards 2025",
+    "kudos": "KUDOS",
+    "tabSent": "Đã gửi",
+    "tabReceived": "Đã nhận",
+    "receivedCount": "Đã nhận {count} Kudos",
+    "sendCta": "Gửi lời cảm ơn và ghi nhận tới {name}",
+    "emptyReceived": "Chưa có kudos nào được nhận.",
+    "emptySent": "Chưa gửi kudos nào."
   }
 }

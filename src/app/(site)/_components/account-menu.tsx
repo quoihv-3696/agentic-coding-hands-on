@@ -22,7 +22,6 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
       value: "profile",
       label: t("home.header.profile"),
       trailing: <UserIcon className="size-4" />,
-      disabled: true,
     },
     ...(isAdmin
       ? [
@@ -43,6 +42,11 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
   ];
 
   const handleSelect = async (value: string) => {
+    if (value === "profile") {
+      // /profile/me resolves the logged-in user → redirects to their /profile/[id].
+      router.push("/profile/me");
+      return;
+    }
     if (value === "logout") {
       const supabase = createClient();
       try {
@@ -53,7 +57,7 @@ export function AccountMenu({ isAdmin = false }: { isAdmin?: boolean }) {
       router.push("/login");
       router.refresh();
     }
-    // "profile" / "admin": disabled stubs — wire when their routes exist.
+    // "admin": disabled stub — wire when that route exists.
   };
 
   return (

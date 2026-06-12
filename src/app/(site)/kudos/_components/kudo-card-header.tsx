@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import type { HeroTier, KudoFeedRow, StarCount } from "@/lib/kudos/types";
@@ -71,7 +72,8 @@ function PersonColumn({
 
   return (
     <div className="flex flex-col items-center gap-3 w-[235px]">
-      {/* 64×64 circular avatar, white border — wrapped in hover card when profileId present */}
+      {/* 64×64 avatar — ProfileHoverCard makes it a /profile/[id] link (hover = preview,
+          click = navigate). Anonymous (no profileId) stays a plain, non-clickable avatar. */}
       {profileId ? (
         <ProfileHoverCard profileId={profileId}>{avatarEl}</ProfileHoverCard>
       ) : (
@@ -80,9 +82,18 @@ function PersonColumn({
 
       {/* Name + meta */}
       <div className="flex flex-col items-center gap-0.5 w-full">
-        <span className="text-secondary text-[16px] font-bold leading-6 text-center truncate w-full">
-          {displayName}
-        </span>
+        {profileId ? (
+          <Link
+            href={`/profile/${profileId}`}
+            className="text-secondary text-[16px] font-bold leading-6 text-center truncate w-full hover:underline"
+          >
+            {displayName}
+          </Link>
+        ) : (
+          <span className="text-secondary text-[16px] font-bold leading-6 text-center truncate w-full">
+            {displayName}
+          </span>
+        )}
         <div className="flex items-center gap-2 justify-center flex-wrap">
           {deptCode && (
             <span className="text-secondary-2 text-[14px] font-bold leading-5">

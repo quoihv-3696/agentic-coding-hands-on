@@ -20,6 +20,8 @@ interface KudosFormDialogProps {
   onOpenChange: (open: boolean) => void;
   /** Pre-fill the recipient field when the dialog opens. */
   defaultRecipientId?: string;
+  /** Display name for the pre-filled recipient, so the field shows it (not just the id). */
+  defaultRecipientName?: string;
 }
 
 interface FormState {
@@ -44,7 +46,12 @@ const INITIAL_STATE: FormState = {
   anonymousNickname: "",
 };
 
-export function KudosFormDialog({ open, onOpenChange, defaultRecipientId }: KudosFormDialogProps) {
+export function KudosFormDialog({
+  open,
+  onOpenChange,
+  defaultRecipientId,
+  defaultRecipientName,
+}: KudosFormDialogProps) {
   const { t } = useTranslations();
   const router = useRouter();
   const [form, setForm] = useState<FormState>(() =>
@@ -160,6 +167,7 @@ export function KudosFormDialog({ open, onOpenChange, defaultRecipientId }: Kudo
               <FieldLabel text={t("kudosForm.recipientLabel")} required />
               <RecipientCombobox
                 value={form.recipientProfileId}
+                initialName={defaultRecipientName}
                 onChange={(id) => patch("recipientProfileId", id)}
               />
             </div>

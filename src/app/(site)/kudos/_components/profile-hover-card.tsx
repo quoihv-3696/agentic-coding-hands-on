@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { fetchProfileSummary } from "@/lib/profile/actions";
 import type { ProfileSummary } from "@/lib/profile/types";
@@ -11,7 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TierBadge } from "./tier-badge";
+import { TierBadge } from "@/components/kudos/tier-badge";
 import { useKudosComposer } from "./kudos-composer";
 import { useHoverOpen } from "./use-hover-open";
 
@@ -57,7 +58,10 @@ export function ProfileHoverCard({
 
   function handleSendKudo() {
     setOpen(false);
-    composer.open(profileId);
+    // Pass the resolved name so the form's recipient field shows it, not just the id.
+    const name =
+      summary && summary !== "loading" ? summary.displayName : undefined;
+    composer.open(profileId, name);
   }
 
   return (
@@ -73,9 +77,15 @@ export function ProfileHoverCard({
         asChild
         onMouseEnter={handleHoverOpen}
         onMouseLeave={scheduleClose}
+        // Hover opens the preview; a click should NAVIGATE to the profile, not
+        // toggle the menu. preventDefault on pointerdown stops Radix's open-on-click
+        // while leaving the anchor's click navigation intact.
+        onPointerDown={(e) => e.preventDefault()}
       >
-        {/* asChild passes hover events down to the actual avatar element */}
-        <span className="inline-flex">{children}</span>
+        {/* asChild passes hover events to the Link; clicking it navigates. */}
+        <Link href={`/profile/${profileId}`} className="inline-flex">
+          {children}
+        </Link>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -93,7 +103,12 @@ export function ProfileHoverCard({
         {summary === "loading" || summary === null ? (
           <CardSkeleton />
         ) : (
-          <CardContent summary={summary} t={t} onSendKudo={handleSendKudo} />
+          <CardContent
+            summary={summary}
+            profileId={profileId}
+            t={t}
+            onSendKudo={handleSendKudo}
+          />
         )}
       </DropdownMenuContent>
     </DropdownMenu>
@@ -116,17 +131,21 @@ function CardSkeleton() {
 
 interface CardContentProps {
   summary: ProfileSummary;
+  profileId: string;
   t: (key: string) => string;
   onSendKudo: () => void;
 }
 
-function CardContent({ summary, t, onSendKudo }: CardContentProps) {
+function CardContent({ summary, profileId, t, onSendKudo }: CardContentProps) {
   return (
     <div className="flex flex-col gap-3">
-      {/* 1. Name */}
-      <p className="text-[18px] font-bold leading-snug text-primary truncate">
+      {/* 1. Name — links to the person's profile page */}
+      <Link
+        href={`/profile/${profileId}`}
+        className="text-[18px] font-bold leading-snug text-primary truncate hover:underline"
+      >
         {summary.displayName}
-      </p>
+      </Link>
 
       {/* 2. Unit line */}
       {summary.unit && (
@@ -156,7 +175,7 @@ function CardContent({ summary, t, onSendKudo }: CardContentProps) {
       {/* 6. Send KUDO button */}
       <Button
         variant="primary"
-        className="w-full justify-center mt-1"
+        className="w-full h-10 justify-center mt-1"
         leftIcon={<PenIcon className="size-4" />}
         onClick={onSendKudo}
       >
