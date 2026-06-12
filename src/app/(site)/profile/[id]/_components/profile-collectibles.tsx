@@ -20,7 +20,7 @@ const COLLECTIBLES: { src: StaticImageData; label: string }[] = [
   { src: stayGold, label: "STAY GOLD" },
   { src: flowToHorizon, label: "FLOW TO HORIZON" },
   { src: beyondTheBoundary, label: "BEYOND THE BOUNDARY" },
-  { src: rootFurther, label: "ROOT FUTHER" },
+  { src: rootFurther, label: "ROOT FURTHER" },
 ];
 
 interface ProfileCollectiblesProps {
