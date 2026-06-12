@@ -24,14 +24,22 @@ import type { Profile } from "@/lib/kudos/types";
 interface RecipientComboboxProps {
   value: string; // profile id
   onChange: (profileId: string) => void;
+  /** Display name for a pre-filled `value`, so the trigger shows the name on open. */
+  initialName?: string;
 }
 
-export function RecipientCombobox({ value, onChange }: RecipientComboboxProps) {
+export function RecipientCombobox({ value, onChange, initialName }: RecipientComboboxProps) {
   const { t } = useTranslations();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Profile[]>([]);
-  const [selected, setSelected] = useState<Profile | null>(null);
+  // Seed the selected display from a pre-filled (id + name) so the trigger shows
+  // the recipient's name immediately, before the user opens the dropdown.
+  const [selected, setSelected] = useState<Profile | null>(() =>
+    value && initialName
+      ? { id: value, displayName: initialName, email: "", avatarUrl: null, deptCode: null }
+      : null,
+  );
 
   // Debounced server-side search (ilike on name/email).
   useEffect(() => {

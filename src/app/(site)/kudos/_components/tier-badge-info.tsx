@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TierBadge } from "./tier-badge";
+import { TierBadge } from "@/components/kudos/tier-badge";
 import { useHoverOpen } from "./use-hover-open";
 
 /**

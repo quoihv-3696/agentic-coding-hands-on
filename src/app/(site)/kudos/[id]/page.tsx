@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getKudoById } from "@/lib/kudos/queries";
 import { KudoCard } from "../_components/kudo-card";
+import { KudosComposerProvider } from "../_components/kudos-composer";
 
 /** Single-Kudo permalink — the Copy Link target from the feed. */
 export default async function KudoDetailPage({
@@ -13,10 +14,14 @@ export default async function KudoDetailPage({
   if (!kudo) notFound();
 
   return (
-    <main className="min-h-screen bg-secondary px-4 pt-[180px] pb-10 md:px-8">
-      <div className="mx-auto max-w-2xl">
-        <KudoCard row={kudo} />
-      </div>
-    </main>
+    // KudoCard's header hover cards call useKudosComposer → needs a provider
+    // (same as LiveBoard / ProfileSections).
+    <KudosComposerProvider>
+      <main className="min-h-screen bg-secondary px-4 pt-[180px] pb-10 md:px-8">
+        <div className="mx-auto max-w-2xl">
+          <KudoCard row={kudo} />
+        </div>
+      </main>
+    </KudosComposerProvider>
   );
 }

@@ -40,7 +40,7 @@ interface KudoFeedDbRow {
   recipient_star_count: number;
 }
 
-function mapFeedRow(row: KudoFeedDbRow): KudoFeedRow {
+export function mapFeedRow(row: KudoFeedDbRow): KudoFeedRow {
   return {
     id: row.id,
     senderProfileId: row.sender_profile_id,
@@ -91,7 +91,7 @@ function decodeCursor(cursor: string): { ts: string; id: string } | null {
 }
 
 /** Flag which of the given rows the current viewer has hearted (per-user toggle state). */
-async function enrichViewerReactions(
+export async function enrichViewerReactions(
   supabase: Awaited<ReturnType<typeof createClient>>,
   rows: KudoFeedRow[],
 ): Promise<void> {

@@ -2,6 +2,32 @@ import { createClient } from "@/lib/supabase/server";
 import type { HeroTier } from "@/lib/kudos/types";
 import type { ProfileSummary } from "./types";
 
+export type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
+
+/**
+ * Count active, non-deleted kudos SENT by a profile. Reads the `kudos` table
+ * directly (not the `kudos_feed` view) so the count includes anonymous-sent
+ * kudos, whose sender is masked out of the view. Single source for both the
+ * hover-card summary and the profile stats box.
+ */
+export async function countKudosSent(
+  supabase: SupabaseServerClient,
+  profileId: string,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("kudos")
+    .select("*", { count: "exact", head: true })
+    .eq("sender_profile_id", profileId)
+    .eq("status", "active")
+    .is("deleted_at", null);
+
+  if (error) {
+    console.error("[profile/queries] countKudosSent error:", error.message);
+    return 0;
+  }
+  return count ?? 0;
+}
+
 interface ProfileHeroTierRow {
   id: string;
   display_name: string;
@@ -58,16 +84,7 @@ export async function getProfileSummary(
   }
 
   // 3. Kudos sent — count of active, non-deleted kudos sent by this profile.
-  const { count: sentCount, error: sentError } = await supabase
-    .from("kudos")
-    .select("*", { count: "exact", head: true })
-    .eq("sender_profile_id", profileId)
-    .eq("status", "active")
-    .is("deleted_at", null);
-
-  if (sentError) {
-    console.error("[profile/queries] getProfileSummary sent error:", sentError.message);
-  }
+  const sentCount = await countKudosSent(supabase, profileId);
 
   return {
     profileId: row.id,
@@ -76,6 +93,6 @@ export async function getProfileSummary(
     avatarUrl: row.avatar_url ?? null,
     heroTier: (row.hero_tier as HeroTier | null) ?? null,
     kudosReceived: row.received_kudos_count ?? 0,
-    kudosSent: sentCount ?? 0,
+    kudosSent: sentCount,
   };
 }

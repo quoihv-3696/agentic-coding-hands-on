@@ -2,7 +2,7 @@
 
 import { useTranslations } from "@/lib/i18n/i18n-context";
 import { Separator } from "@/components/ui/separator";
-import { SecretBoxStub } from "./secret-box-stub";
+import { SecretBoxStub } from "@/components/kudos/secret-box-stub";
 import { Leaderboard } from "./leaderboard";
 import type { StatsSummary, LeaderboardEntry } from "@/lib/kudos/types";
 
